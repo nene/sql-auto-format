@@ -1,4 +1,4 @@
-# SQL auto-format
+# SQL auto-format ![build status](https://github.com/nene/sql-auto-format/actions/workflows/build.yml/badge.svg)
 
 Pretty-prints SQL code.
 
