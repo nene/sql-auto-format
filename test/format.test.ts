@@ -1,10 +1,9 @@
 import { format } from "../src/format";
-import { parse } from "./test_utils";
 import dedent from "dedent-js";
 
 describe("format()", () => {
   function testFormat(sql: string) {
-    return format(parse(sql));
+    return format(sql);
   }
 
   it("formats basic SELECT", () => {
