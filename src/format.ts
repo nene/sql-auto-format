@@ -1,15 +1,19 @@
-import { parse, Program } from "sql-parser-cst";
+import { parse, ParserOptions, Program } from "sql-parser-cst";
 import { isLine, layout } from "./layout";
 import { serialize } from "./serialize";
 import { unroll } from "./unroll";
 
+export interface FormatOptions {
+  dialect: ParserOptions["dialect"];
+}
+
 /**
  * Takes SQL string and auto-formats it.
  */
-export function format(sql: string): string {
+export function format(sql: string, options: FormatOptions): string {
   return formatCst(
     parse(sql, {
-      dialect: "sqlite",
+      dialect: options.dialect,
       preserveComments: true,
       preserveNewlines: true,
     })

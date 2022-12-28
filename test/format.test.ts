@@ -3,7 +3,7 @@ import dedent from "dedent-js";
 
 describe("format()", () => {
   function testFormat(sql: string) {
-    return format(sql);
+    return format(sql, { dialect: "sqlite" });
   }
 
   it("formats basic SELECT", () => {
