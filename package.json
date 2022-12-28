@@ -23,7 +23,7 @@
     "clean": "rm -rf lib",
     "build": "yarn clean && tsc",
     "test": "jest",
-    "lint": "eslint src/**/*.ts test/**/*.ts"
+    "lint": "eslint src test"
   },
   "dependencies": {
     "sql-parser-cst": "^0.10.0"
