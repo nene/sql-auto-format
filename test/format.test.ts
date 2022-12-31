@@ -7,6 +7,17 @@ describe("format()", () => {
   }
 
   it("formats basic SELECT", () => {
+    expect(testFormat(`SELECT foo, bar, baz FROM my_table`)).toBe(dedent`
+      SELECT
+        foo,
+        bar,
+        baz
+      FROM
+        my_table
+    `);
+  });
+
+  it("formats SELECT with comments", () => {
     expect(
       testFormat(
         `/* some comment */
