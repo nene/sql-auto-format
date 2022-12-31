@@ -74,13 +74,7 @@ const layoutNode = cstTransformer<Layout>({
   // SELECT
   select_clause: (node) => [
     line(layout(node.selectKw)),
-    indent(
-      ...node.columns.items
-        .map(layout)
-        .map((col, i) =>
-          i < node.columns.items.length - 1 ? line(col, ",") : line(col)
-        )
-    ),
+    indent(...node.columns.items.map(layout).map(lineWithSeparator(","))),
   ],
   // FROM
   from_clause: (node) => [line(layout(node.fromKw)), indent(layout(node.expr))],
@@ -107,6 +101,10 @@ const layoutNode = cstTransformer<Layout>({
   boolean_literal: (node) => node.text,
   null_literal: (node) => node.text,
 });
+
+const lineWithSeparator =
+  (separator: string) => (item: Layout, i: number, allItems: Layout[]) =>
+    i < allItems.length - 1 ? line(item, separator) : line(item);
 
 // utils for easy creation of lines
 
