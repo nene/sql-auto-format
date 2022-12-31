@@ -17,6 +17,15 @@ describe("format()", () => {
     `);
   });
 
+  it("formats SELECT with aliases", () => {
+    expect(testFormat(`SELECT foo AS f FROM my_table t`)).toBe(dedent`
+      SELECT
+        foo AS f
+      FROM
+        my_table t
+    `);
+  });
+
   it("formats SELECT with comments", () => {
     expect(
       testFormat(
