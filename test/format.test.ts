@@ -26,6 +26,13 @@ describe("format()", () => {
     `);
   });
 
+  it("formats SELECT with binary expressions", () => {
+    expect(testFormat(`SELECT 5 + 6/2 - 8`)).toBe(dedent`
+      SELECT
+        5 + 6 / 2 - 8
+    `);
+  });
+
   it("formats SELECT with comments", () => {
     expect(
       testFormat(
