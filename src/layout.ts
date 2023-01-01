@@ -106,10 +106,7 @@ const layoutNode = cstTransformer<Layout>({
     node.property.type === "array_subscript"
       ? layout([node.object, node.property])
       : layout([node.object, ".", node.property]),
-  alias: (node) =>
-    node.asKw
-      ? spacedLayout([node.expr, node.asKw, node.alias])
-      : spacedLayout([node.expr, node.alias]),
+  alias: (node) => spacedLayout([node.expr, node.asKw, node.alias]),
   all_columns: () => "*",
 
   // Basic language elements
