@@ -1,5 +1,5 @@
 import { Node, Whitespace, cstTransformer } from "sql-parser-cst";
-import { isObject, isString } from "./utils";
+import { isDefined, isObject, isString } from "./utils";
 
 export type Layout = Line | string | Layout[];
 
@@ -13,14 +13,14 @@ export const isLine = (item: Layout): item is Line =>
   // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access
   isObject(item) && (item as any).layout === "line";
 
-type NodeArray = (Node | NodeArray | string)[];
+type NodeArray = (Node | NodeArray | string | undefined)[];
 
 export function layout(node: Node | string | NodeArray): Layout {
   if (isString(node)) {
     return node;
   }
   if (node instanceof Array) {
-    return node.map(layout);
+    return node.filter(isDefined).map(layout);
   }
 
   const leading = layoutComments(node.leading, node);
@@ -93,9 +93,8 @@ const layoutNode = cstTransformer<Layout>({
       line(")"),
     ];
   },
-  column_definition: (node) =>
-    layout([node.name, node.dataType ? [" ", node.dataType] : []]),
-  data_type: (node) => layout([node.nameKw, node.params ? [node.params] : []]),
+  column_definition: (node) => spacedLayout([node.name, node.dataType]),
+  data_type: (node) => layout([node.nameKw, node.params]),
 
   // Expressions
   binary_expr: (node) => spacedLayout([node.left, node.operator, node.right]),
