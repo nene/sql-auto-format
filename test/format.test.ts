@@ -33,14 +33,14 @@ describe("format()", () => {
     `);
   });
 
-  // it("formats multiple statements", () => {
-  //   expect(testFormat(`SELECT 1; SELECT 2`)).toBe(dedent`
-  //     SELECT
-  //       1;
-  //     SELECT
-  //       2
-  //   `);
-  // });
+  it("formats multiple statements", () => {
+    expect(testFormat(`SELECT 1; SELECT 2`)).toBe(dedent`
+      SELECT
+        1;
+      SELECT
+        2
+    `);
+  });
 
   it("formats trailing comment", () => {
     expect(testFormat(`SELECT foo -- trailing comment`)).toBe(dedent`
