@@ -86,12 +86,24 @@ describe("format()", () => {
   it("formats first-line block-comment", () => {
     expect(
       testFormat(
-        `
-        /* some comment */
+        `/* some comment */
         SELECT 1`
       )
     ).toBe(dedent`
       /* some comment */
+      SELECT
+        1
+    `);
+  });
+
+  it("formats first-line line-comment", () => {
+    expect(
+      testFormat(
+        `-- some comment
+        SELECT 1`
+      )
+    ).toBe(dedent`
+      -- some comment
       SELECT
         1
     `);
