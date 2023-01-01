@@ -124,48 +124,23 @@ describe("format: unroll()", () => {
     ]);
   });
 
-  it("a line before strings divides the string-sequence to multiple lines", () => {
+  it("strings after line get appended to the preceding line", () => {
     expect(unroll([{ layout: "line", items: ["sub", "line"] }, "foo", "bar"])).toEqual([
-      { layout: "line", items: ["sub", "line"] },
-      { layout: "line", items: ["foo", "bar"] },
+      { layout: "line", items: ["sub", "line", "foo", "bar"] },
     ]);
   });
 
-  it("a line after strings divides the string-sequence to multiple lines", () => {
+  it("a line after strings remains the same", () => {
     expect(unroll(["foo", "bar", { layout: "line", items: ["sub", "line"] }])).toEqual([
-      { layout: "line", items: ["foo", "bar"] },
+      "foo",
+      "bar",
       { layout: "line", items: ["sub", "line"] },
     ]);
   });
 
-  it("a line between strings divides the string-sequence to multiple lines", () => {
+  it("a line between strings gets concatenated with strings after it", () => {
     expect(
       unroll(["foo", "bar", { layout: "line", items: ["sub", "line"] }, "baz", "zap"])
-    ).toEqual([
-      { layout: "line", items: ["foo", "bar"] },
-      { layout: "line", items: ["sub", "line"] },
-      { layout: "line", items: ["baz", "zap"] },
-    ]);
-  });
-
-  it("a trailing line after strings forms a single line", () => {
-    expect(
-      unroll(["foo", "bar", { layout: "line", items: ["sub", "line"], trailing: true }])
-    ).toEqual([{ layout: "line", items: ["foo", "bar", "sub", "line"] }]);
-  });
-
-  it("a trailing line between strings forms a single line with first, separating the next", () => {
-    expect(
-      unroll([
-        "foo",
-        "bar",
-        { layout: "line", items: ["sub", "line"], trailing: true },
-        "baz",
-        "zap",
-      ])
-    ).toEqual([
-      { layout: "line", items: ["foo", "bar", "sub", "line"] },
-      { layout: "line", items: ["baz", "zap"] },
-    ]);
+    ).toEqual(["foo", "bar", { layout: "line", items: ["sub", "line", "baz", "zap"] }]);
   });
 });

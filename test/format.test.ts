@@ -33,6 +33,49 @@ describe("format()", () => {
     `);
   });
 
+  // it("formats multiple statements", () => {
+  //   expect(testFormat(`SELECT 1; SELECT 2`)).toBe(dedent`
+  //     SELECT
+  //       1;
+  //     SELECT
+  //       2
+  //   `);
+  // });
+
+  it("formats trailing comment", () => {
+    expect(testFormat(`SELECT foo -- trailing comment`)).toBe(dedent`
+      SELECT
+        foo -- trailing comment
+    `);
+  });
+
+  it("formats separate line comment", () => {
+    expect(
+      testFormat(`
+        SELECT foo
+        -- line comment
+      `)
+    ).toBe(dedent`
+      SELECT
+        foo
+      -- line comment
+    `);
+  });
+
+  it("formats trailing comment followed by next clause", () => {
+    expect(
+      testFormat(
+        `SELECT foo -- trailing comment
+        FROM x`
+      )
+    ).toBe(dedent`
+      SELECT
+        foo -- trailing comment
+      FROM
+        x
+    `);
+  });
+
   it("formats SELECT with comments", () => {
     expect(
       testFormat(

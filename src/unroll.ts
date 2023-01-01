@@ -1,4 +1,4 @@
-import { isString } from "./utils";
+import { isString, last } from "./utils";
 import { Line, isLine, Layout } from "./layout";
 
 export function unroll(item: Layout): Layout {
@@ -19,26 +19,20 @@ function unrollArray(array: Layout[]): Layout[] {
     return flatArray;
   }
 
-  const lines: Line[] = [];
-  flatArray.forEach((item, i) => {
+  const results: Layout[] = [];
+  flatArray.forEach((item) => {
     if (isLine(item)) {
-      if (item.trailing && lines.length > 0) {
-        lines[lines.length - 1].items.push(...item.items);
-      } else {
-        lines.push(item);
-      }
-      if (isString(flatArray[i + 1])) {
-        lines.push({ layout: "line", items: [] });
-      }
+      results.push(item);
     } else {
-      if (lines.length === 0) {
-        lines.push({ layout: "line", items: [item] });
+      const lastItem = last(results);
+      if (isLine(lastItem)) {
+        lastItem.items.push(item);
       } else {
-        lines[lines.length - 1].items.push(item);
+        results.push(item);
       }
     }
   });
-  return lines;
+  return results;
 }
 
 function unrollLine(line: Line): Line[] {
@@ -53,4 +47,11 @@ function unrollLine(line: Line): Line[] {
     });
   }
   return [{ ...line, items: lineItems }];
+}
+
+// After the normal unroll is done, converts remaining top-level strings to lines
+export function remainingStringsToLines(items: Layout[]): Line[] {
+  return items.map((item) => {
+    return isLine(item) ? item : { layout: "line", items: [item] };
+  });
 }

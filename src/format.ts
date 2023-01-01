@@ -1,7 +1,7 @@
 import { parse, ParserOptions, Program } from "sql-parser-cst";
-import { isLine, layout } from "./layout";
+import { layout } from "./layout";
 import { serialize } from "./serialize";
-import { unroll } from "./unroll";
+import { remainingStringsToLines, unroll } from "./unroll";
 
 export interface FormatOptions {
   dialect: ParserOptions["dialect"];
@@ -21,11 +21,11 @@ export function format(sql: string, options: FormatOptions): string {
 }
 
 function formatCst(node: Program): string {
-  const lines = unroll(layout(node));
-  if (!(lines instanceof Array) || !lines.every(isLine)) {
+  const layoutItems = unroll(layout(node));
+  if (!(layoutItems instanceof Array)) {
     throw new Error(
-      `Expected array of lines, instead got ${JSON.stringify(lines)}`
+      `Expected array, instead got ${JSON.stringify(layoutItems)}`
     );
   }
-  return serialize(lines);
+  return serialize(remainingStringsToLines(layoutItems));
 }
