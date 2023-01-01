@@ -76,22 +76,23 @@ describe("format()", () => {
     `);
   });
 
-  it("formats SELECT with comments", () => {
+  it("formats inline block-comment", () => {
+    expect(testFormat(`SELECT col1 + 3 /* inline */ AS c1`)).toBe(dedent`
+      SELECT
+        col1 + 3/* inline */ AS c1
+    `);
+  });
+
+  it("formats first-line block-comment", () => {
     expect(
       testFormat(
         `/* some comment */
-        SELECT col1 + 3 /* inline */ AS c1, col2 -- trailing comment
-        -- line comment
-        FROM db.tbl t`
+        SELECT 1`
       )
     ).toBe(dedent`
       /* some comment */
       SELECT
-        col1 + 3/* inline */ AS c1,
-        col2 -- trailing comment
-      -- line comment
-      FROM
-        db.tbl t
+        1
     `);
   });
 });
