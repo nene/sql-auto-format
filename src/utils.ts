@@ -13,3 +13,12 @@ export const isString = (x: any): x is string => typeof x === "string";
 /** Type guard for objects */
 export const isObject = (x: any): x is Record<string, any> =>
   typeof x === "object" && x !== null && !(x instanceof Array);
+
+/* Removes elements from the start of the array that match the predicate */
+export const dropWhile = <T>(fn: (x: T) => boolean, arr: T[]): T[] => {
+  let i = 0;
+  while (fn(arr[i])) {
+    i++;
+  }
+  return i > 0 ? arr.slice(i) : arr;
+};

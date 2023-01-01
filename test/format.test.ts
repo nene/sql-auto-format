@@ -79,14 +79,15 @@ describe("format()", () => {
   it("formats inline block-comment", () => {
     expect(testFormat(`SELECT col1 + 3 /* inline */ AS c1`)).toBe(dedent`
       SELECT
-        col1 + 3/* inline */ AS c1
+        col1 + 3 /* inline */ AS c1
     `);
   });
 
   it("formats first-line block-comment", () => {
     expect(
       testFormat(
-        `/* some comment */
+        `
+        /* some comment */
         SELECT 1`
       )
     ).toBe(dedent`

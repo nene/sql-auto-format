@@ -1,4 +1,5 @@
 import { parse, ParserOptions, Program } from "sql-parser-cst";
+import { collapseSpaces } from "./collapseSpaces";
 import { layout } from "./layout";
 import { serialize } from "./serialize";
 import { remainingStringsToLines, unroll } from "./unroll";
@@ -27,5 +28,5 @@ function formatCst(node: Program): string {
       `Expected array, instead got ${JSON.stringify(layoutItems)}`
     );
   }
-  return serialize(remainingStringsToLines(layoutItems));
+  return serialize(collapseSpaces(remainingStringsToLines(layoutItems)));
 }
