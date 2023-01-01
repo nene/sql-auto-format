@@ -20,7 +20,7 @@ export function layout(node: Node | string | NodeArray): Layout {
     return node;
   }
   if (node instanceof Array) {
-    return joinLayoutArray(node.map(layout), " ");
+    return node.map(layout);
   }
 
   const leading = layoutComments(node.leading, node);
@@ -85,41 +85,31 @@ const layoutNode = cstTransformer<Layout>({
     }
     return [
       line(
-        layout(node.createKw),
-        " ",
-        layout(node.tableKw),
-        " ",
-        layout(node.name),
-        " ",
-        "("
+        layout([node.createKw, " ", node.tableKw, " ", node.name, " ", "("])
       ),
       indent(node.columns.expr.items.map(layout).map(lineWithSeparator(","))),
       line(")"),
     ];
   },
-  column_definition: (node) => [
-    layout(node.name),
-    node.dataType ? [" ", layout(node.dataType)] : [],
-  ],
-  data_type: (node) => [
-    layout(node.nameKw),
-    node.params ? [layout(node.params)] : [],
-  ],
+  column_definition: (node) =>
+    layout([node.name, node.dataType ? [" ", node.dataType] : []]),
+  data_type: (node) => layout([node.nameKw, node.params ? [node.params] : []]),
 
   // Expressions
-  binary_expr: ({ left, operator, right }) => layout([left, operator, right]),
-  paren_expr: (node) => ["(", layout(node.expr), ")"],
+  binary_expr: ({ left, operator, right }) =>
+    layout([left, " ", operator, " ", right]),
+  paren_expr: (node) => layout(["(", node.expr, ")"]),
   list_expr: (node) => node.items.map(layout).map(withSeparator(",", " ")),
 
   // Tables & columns
   member_expr: (node) =>
     node.property.type === "array_subscript"
       ? layout([node.object, node.property])
-      : [layout(node.object), ".", layout(node.property)],
+      : layout([node.object, ".", node.property]),
   alias: (node) =>
     node.asKw
-      ? layout([node.expr, node.asKw, node.alias])
-      : layout([node.expr, node.alias]),
+      ? layout([node.expr, " ", node.asKw, " ", node.alias])
+      : layout([node.expr, " ", node.alias]),
   all_columns: () => "*",
 
   // Basic language elements
