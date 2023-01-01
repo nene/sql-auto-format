@@ -54,15 +54,15 @@ const layoutComments = (items?: Whitespace[], node?: Node): Layout[] => {
   return result;
 };
 
-function spacedLayout(nodes: NodeArray, separator = " "): Layout {
-  return joinLayoutArray(layout(nodes) as Layout[], separator);
+function spacedLayout(nodes: NodeArray, separators = [" "]): Layout {
+  return joinLayoutArray(layout(nodes) as Layout[], separators);
 }
 
-function joinLayoutArray(array: Layout[], separator = " "): Layout[] {
+function joinLayoutArray(array: Layout[], separators = [" "]): Layout[] {
   const result: Layout[] = [];
   for (const it of array) {
     if (result.length > 0) {
-      result.push(separator);
+      result.push(...separators);
     }
     result.push(it);
   }
@@ -100,7 +100,7 @@ const layoutNode = cstTransformer<Layout>({
   // Expressions
   binary_expr: (node) => spacedLayout([node.left, node.operator, node.right]),
   paren_expr: (node) => layout(["(", node.expr, ")"]),
-  list_expr: (node) => node.items.map(layout).map(withSeparator(",", " ")),
+  list_expr: (node) => spacedLayout(node.items, [",", " "]),
 
   // Tables & columns
   member_expr: (node) =>
@@ -125,11 +125,6 @@ const layoutNode = cstTransformer<Layout>({
 const lineWithSeparator =
   (separator: string) => (item: Layout, i: number, allItems: Layout[]) =>
     i < allItems.length - 1 ? line(item, separator) : line(item);
-
-const withSeparator =
-  (...separators: string[]) =>
-  (item: Layout, i: number, allItems: Layout[]) =>
-    i < allItems.length - 1 ? [item, ...separators] : item;
 
 // utils for easy creation of lines
 
