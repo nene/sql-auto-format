@@ -79,6 +79,30 @@ const layoutNode = cstTransformer<Layout>({
   // FROM
   from_clause: (node) => [line(layout(node.fromKw)), indent(layout(node.expr))],
 
+  create_table_stmt: (node) => {
+    if (!node.columns) {
+      throw new Error("Unimplemented: CREATE TABLE without columns");
+    }
+    return [
+      line(
+        layout(node.createKw),
+        " ",
+        layout(node.tableKw),
+        " ",
+        layout(node.name),
+        " ",
+        "("
+      ),
+      indent(node.columns.expr.items.map(layout).map(lineWithSeparator(","))),
+      line(")"),
+    ];
+  },
+  column_definition: (node) => [
+    layout(node.name),
+    node.dataType ? [" ", layout(node.dataType)] : [],
+  ],
+  data_type: (node) => [layout(node.nameKw)],
+
   // Expressions
   binary_expr: ({ left, operator, right }) => layout([left, operator, right]),
 
