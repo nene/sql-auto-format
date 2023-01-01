@@ -54,6 +54,10 @@ const layoutComments = (items?: Whitespace[], node?: Node): Layout[] => {
   return result;
 };
 
+function spacedLayout(nodes: NodeArray, separator = " "): Layout {
+  return joinLayoutArray(layout(nodes) as Layout[], separator);
+}
+
 function joinLayoutArray(array: Layout[], separator = " "): Layout[] {
   const result: Layout[] = [];
   for (const it of array) {
@@ -84,9 +88,7 @@ const layoutNode = cstTransformer<Layout>({
       throw new Error("Unimplemented: CREATE TABLE without columns");
     }
     return [
-      line(
-        layout([node.createKw, " ", node.tableKw, " ", node.name, " ", "("])
-      ),
+      line(spacedLayout([node.createKw, node.tableKw, node.name, "("])),
       indent(node.columns.expr.items.map(layout).map(lineWithSeparator(","))),
       line(")"),
     ];
@@ -96,8 +98,7 @@ const layoutNode = cstTransformer<Layout>({
   data_type: (node) => layout([node.nameKw, node.params ? [node.params] : []]),
 
   // Expressions
-  binary_expr: ({ left, operator, right }) =>
-    layout([left, " ", operator, " ", right]),
+  binary_expr: (node) => spacedLayout([node.left, node.operator, node.right]),
   paren_expr: (node) => layout(["(", node.expr, ")"]),
   list_expr: (node) => node.items.map(layout).map(withSeparator(",", " ")),
 
@@ -108,8 +109,8 @@ const layoutNode = cstTransformer<Layout>({
       : layout([node.object, ".", node.property]),
   alias: (node) =>
     node.asKw
-      ? layout([node.expr, " ", node.asKw, " ", node.alias])
-      : layout([node.expr, " ", node.alias]),
+      ? spacedLayout([node.expr, node.asKw, node.alias])
+      : spacedLayout([node.expr, node.alias]),
   all_columns: () => "*",
 
   // Basic language elements
