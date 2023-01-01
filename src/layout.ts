@@ -58,7 +58,7 @@ function spacedLayout(nodes: NodeArray, separators = [" "]): Layout {
   return joinLayoutArray(layout(nodes) as Layout[], separators);
 }
 
-function joinLayoutArray(array: Layout[], separators = [" "]): Layout[] {
+function joinLayoutArray(array: Layout[], separators: string[]): Layout[] {
   const result: Layout[] = [];
   for (const it of array) {
     if (result.length > 0) {
