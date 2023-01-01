@@ -101,10 +101,15 @@ const layoutNode = cstTransformer<Layout>({
     layout(node.name),
     node.dataType ? [" ", layout(node.dataType)] : [],
   ],
-  data_type: (node) => [layout(node.nameKw)],
+  data_type: (node) => [
+    layout(node.nameKw),
+    node.params ? [layout(node.params)] : [],
+  ],
 
   // Expressions
   binary_expr: ({ left, operator, right }) => layout([left, operator, right]),
+  paren_expr: (node) => ["(", layout(node.expr), ")"],
+  list_expr: (node) => node.items.map(layout).map(withSeparator(",", " ")),
 
   // Tables & columns
   member_expr: (node) =>
@@ -129,6 +134,11 @@ const layoutNode = cstTransformer<Layout>({
 const lineWithSeparator =
   (separator: string) => (item: Layout, i: number, allItems: Layout[]) =>
     i < allItems.length - 1 ? line(item, separator) : line(item);
+
+const withSeparator =
+  (...separators: string[]) =>
+  (item: Layout, i: number, allItems: Layout[]) =>
+    i < allItems.length - 1 ? [item, ...separators] : item;
 
 // utils for easy creation of lines
 
