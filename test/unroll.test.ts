@@ -144,6 +144,20 @@ describe("format: unroll()", () => {
     ).toEqual(["foo", "bar", { layout: "line", items: ["sub", "line", "baz", "zap"] }]);
   });
 
+  it("a line between strings inside a line gets broken up to two lines", () => {
+    expect(
+      unroll([
+        {
+          layout: "line",
+          items: ["foo", "bar", { layout: "line", items: ["sub", "line"] }, "baz", "zap"],
+        },
+      ])
+    ).toEqual([
+      { layout: "line", items: ["foo", "bar"] },
+      { layout: "line", items: ["sub", "line", "baz", "zap"] },
+    ]);
+  });
+
   it("empty line is preserved", () => {
     const lines: Line[] = [
       { layout: "line", items: ["first"] },

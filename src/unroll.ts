@@ -1,4 +1,4 @@
-import { isString, last } from "./utils";
+import { isNumber, isString, last } from "./utils";
 import { Line, isLine, Layout } from "./layout";
 
 export function unroll(item: Layout): Layout {
@@ -37,7 +37,10 @@ function unrollArray(array: Layout[]): Layout[] {
 
 function unrollLine(line: Line): Line[] {
   const lineItems = unrollArray(line.items);
-  if (lineItems.length > 0 && lineItems.every(isLine)) {
+  if (lineItems.length === 0) {
+    return [{ ...line, items: [] }];
+  }
+  if (lineItems.every(isLine)) {
     return lineItems.map((subLine) => {
       if (line.indent) {
         return { ...subLine, indent: line.indent + (subLine.indent || 0) };
@@ -46,7 +49,25 @@ function unrollLine(line: Line): Line[] {
       }
     });
   }
-  return [{ ...line, items: lineItems }];
+  if (lineItems.every((x) => isString(x) || isNumber(x))) {
+    return [{ ...line, items: lineItems }];
+  }
+
+  // gather leading strings/numbers to separate line
+  const lines: Line[] = [];
+  lineItems.forEach((item) => {
+    if (isLine(item)) {
+      lines.push(item);
+    } else {
+      const lastLine = last(lines);
+      if (isLine(lastLine)) {
+        lastLine.items.push(item);
+      } else {
+        lines.push({ layout: "line", items: [item] });
+      }
+    }
+  });
+  return lines;
 }
 
 // After the normal unroll is done, converts remaining top-level strings to lines
