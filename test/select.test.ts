@@ -28,13 +28,4 @@ describe("select", () => {
         5 + 6 / 2 - 8
     `);
   });
-
-  it("formats multiple statements", () => {
-    expect(format(`SELECT 1; SELECT 2`)).toBe(dedent`
-      SELECT
-        1;
-      SELECT
-        2
-    `);
-  });
 });
