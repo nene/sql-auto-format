@@ -9,6 +9,19 @@ import {
   isLayoutLiteral,
 } from "./LayoutTypes";
 
+export function unrollToLines(layout: Layout): UnrolledLine[] {
+  const unrolledItems = unroll(layout);
+  if (!(unrolledItems instanceof Array)) {
+    throw new Error(
+      `Expected array, instead got ${JSON.stringify(unrolledItems)}`
+    );
+  }
+  // After the normal unroll is done, convert remaining top-level strings to lines
+  return unrolledItems.map((item) => {
+    return isLine(item) ? item : { layout: "line", items: [item] };
+  });
+}
+
 export function unroll(item: Layout): UnrolledLayout | UnrolledLayout[] {
   if (isLine(item)) {
     return unrollLine(item);
@@ -76,13 +89,4 @@ function unrollLine(line: Line): UnrolledLine[] {
     }
   });
   return lines;
-}
-
-// After the normal unroll is done, converts remaining top-level strings to lines
-export function remainingStringsToLines(
-  items: UnrolledLayout[]
-): UnrolledLine[] {
-  return items.map((item) => {
-    return isLine(item) ? item : { layout: "line", items: [item] };
-  });
 }

@@ -3,7 +3,7 @@ import { collapseSpaces } from "./collapseSpaces";
 import { layout } from "./layout";
 import { serialize } from "./serialize";
 import { startWithEmptyLine } from "./startWithEmptyLine";
-import { remainingStringsToLines, unroll } from "./unroll";
+import { unrollToLines } from "./unroll";
 
 export interface FormatOptions {
   dialect: ParserOptions["dialect"];
@@ -23,11 +23,7 @@ export function format(sql: string, options: FormatOptions): string {
 }
 
 function formatCst(node: Program): string {
-  const layoutItems = unroll(layout(startWithEmptyLine(node)));
-  if (!(layoutItems instanceof Array)) {
-    throw new Error(
-      `Expected array, instead got ${JSON.stringify(layoutItems)}`
-    );
-  }
-  return serialize(collapseSpaces(remainingStringsToLines(layoutItems))).trim();
+  return serialize(
+    collapseSpaces(unrollToLines(layout(startWithEmptyLine(node))))
+  ).trim();
 }
