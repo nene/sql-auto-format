@@ -46,7 +46,7 @@ describe("format: layout()", () => {
               },
             ],
             [
-              " ",
+              1,
               "-- comment",
               [
                 { layout: "line", items: ["FROM"] },

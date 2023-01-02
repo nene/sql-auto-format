@@ -1,7 +1,12 @@
 import { Node, Whitespace, cstTransformer, Statement } from "sql-parser-cst";
-import { isDefined, isObject, isString } from "./utils";
+import { isDefined, isNumber, isObject, isString } from "./utils";
 
-export type Layout = Line | string | Layout[];
+// Whitespace items
+export enum WS {
+  space = 1,
+}
+
+export type Layout = Line | string | WS | Layout[];
 
 export type Line = {
   layout: "line";
@@ -13,10 +18,10 @@ export const isLine = (item: Layout): item is Line =>
   // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access
   isObject(item) && (item as any).layout === "line";
 
-type NodeArray = (Node | NodeArray | string | undefined)[];
+type NodeArray = (Node | NodeArray | string | WS | undefined)[];
 
-export function layout(node: Node | string | NodeArray): Layout {
-  if (isString(node)) {
+export function layout(node: Node | string | WS | NodeArray): Layout {
+  if (isString(node) || isNumber(node)) {
     return node;
   }
   if (node instanceof Array) {
@@ -43,13 +48,13 @@ const layoutWhitespace = (
       if (prev?.type === "newline") {
         result.push(line(ws.text));
       } else {
-        result.push(" ", ws.text, " ");
+        result.push(WS.space, ws.text, WS.space);
       }
     } else if (ws.type === "line_comment") {
       if (prev?.type === "newline") {
         result.push(line(ws.text));
       } else {
-        result.push(" ", ws.text);
+        result.push(WS.space, ws.text);
       }
     } else if (
       isStatement(node) &&
@@ -64,11 +69,17 @@ const layoutWhitespace = (
 
 const isStatement = (node: Node): node is Statement => /_stmt$/.test(node.type);
 
-function spacedLayout(nodes: NodeArray, separators = [" "]): Layout {
+function spacedLayout(
+  nodes: NodeArray,
+  separators: (string | WS)[] = [WS.space]
+): Layout {
   return joinLayoutArray(layout(nodes) as Layout[], separators);
 }
 
-function joinLayoutArray(array: Layout[], separators: string[]): Layout[] {
+function joinLayoutArray(
+  array: Layout[],
+  separators: (string | WS)[]
+): Layout[] {
   const result: Layout[] = [];
   for (const it of array) {
     if (result.length > 0) {
@@ -109,7 +120,7 @@ const layoutNode = cstTransformer<Layout>({
   // Expressions
   binary_expr: (node) => spacedLayout([node.left, node.operator, node.right]),
   paren_expr: (node) => layout(["(", node.expr, ")"]),
-  list_expr: (node) => spacedLayout(node.items, [",", " "]),
+  list_expr: (node) => spacedLayout(node.items, [",", WS.space]),
 
   // Tables & columns
   member_expr: (node) =>

@@ -1,22 +1,25 @@
 import { dropWhile, last } from "./utils";
-import { Line } from "./layout";
+import { Line, WS } from "./layout";
 
 export function collapseSpaces(lines: Line[]): Line[] {
   return lines.map((line) => ({
     ...line,
-    items: trimRepeating(trimTrailing(trimLeading(line.items as string[]))),
+    items: trimRepeating(
+      trimTrailing(trimLeading(line.items as (string | WS)[]))
+    ),
   }));
 }
 
-const trimLeading = (items: string[]) => dropWhile((x) => x === " ", items);
+const trimLeading = (items: (string | WS)[]) =>
+  dropWhile((x) => x === WS.space, items);
 
-const trimTrailing = (items: string[]) =>
+const trimTrailing = (items: (string | WS)[]) =>
   trimLeading(items.reverse()).reverse();
 
-const trimRepeating = (items: string[]) => {
-  const result: string[] = [];
+const trimRepeating = (items: (string | WS)[]) => {
+  const result: (string | WS)[] = [];
   for (const x of items) {
-    if (x === " " && last(result) === " ") {
+    if (x === WS.space && last(result) === WS.space) {
       // skip duplicate space
     } else {
       result.push(x);
