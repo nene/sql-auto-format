@@ -68,4 +68,36 @@ describe("comments", () => {
         1
     `);
   });
+
+  it("formats multiple leading line-comments", () => {
+    expect(
+      format(
+        `-- com1
+        -- com2
+        -- com3
+        SELECT 1`
+      )
+    ).toBe(dedent`
+      -- com1
+      -- com2
+      -- com3
+      SELECT
+        1
+    `);
+  });
+
+  it("formats multiple leading block-comments", () => {
+    expect(
+      format(
+        `/* com1 */
+        /* com2 */
+        SELECT 1`
+      )
+    ).toBe(dedent`
+      /* com1 */
+      /* com2 */
+      SELECT
+        1
+    `);
+  });
 });
