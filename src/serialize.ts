@@ -1,6 +1,6 @@
-import { isLine, Layout, Line, WS } from "./LayoutTypes";
+import { LayoutLiteral, UnrolledLine, WS } from "./LayoutTypes";
 
-export function serialize(lines: Line[]): string {
+export function serialize(lines: UnrolledLine[]): string {
   const INDENT = "  ";
   return lines
     .map(
@@ -11,10 +11,7 @@ export function serialize(lines: Line[]): string {
     .join("\n");
 }
 
-const serializeWhitespace = (item: string | WS | Line | Layout[]): string => {
-  if (isLine(item) || item instanceof Array) {
-    throw new Error("Unexpected Line or Array");
-  }
+const serializeWhitespace = (item: LayoutLiteral): string => {
   switch (item) {
     case WS.space:
       return " ";

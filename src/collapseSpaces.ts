@@ -1,23 +1,21 @@
 import { dropWhile, last } from "./utils";
-import { Line, WS } from "./LayoutTypes";
+import { LayoutLiteral, UnrolledLine, WS } from "./LayoutTypes";
 
-export function collapseSpaces(lines: Line[]): Line[] {
+export function collapseSpaces(lines: UnrolledLine[]): UnrolledLine[] {
   return lines.map((line) => ({
     ...line,
-    items: trimRepeating(
-      trimTrailing(trimLeading(line.items as (string | WS)[]))
-    ),
+    items: trimRepeating(trimTrailing(trimLeading(line.items))),
   }));
 }
 
-const trimLeading = (items: (string | WS)[]) =>
+const trimLeading = (items: LayoutLiteral[]) =>
   dropWhile((x) => x === WS.space, items);
 
-const trimTrailing = (items: (string | WS)[]) =>
+const trimTrailing = (items: LayoutLiteral[]) =>
   trimLeading(items.reverse()).reverse();
 
-const trimRepeating = (items: (string | WS)[]) => {
-  const result: (string | WS)[] = [];
+const trimRepeating = (items: LayoutLiteral[]) => {
+  const result: LayoutLiteral[] = [];
   for (const x of items) {
     if (x === WS.space && last(result) === WS.space) {
       // skip duplicate space

@@ -1,7 +1,15 @@
-import { isNumber, isString, last } from "./utils";
-import { Line, isLine, Layout } from "./LayoutTypes";
+import { isString, last } from "./utils";
+import {
+  Line,
+  isLine,
+  Layout,
+  UnrolledLayout,
+  UnrolledLine,
+  isUnrolledLine,
+  isLayoutLiteral,
+} from "./LayoutTypes";
 
-export function unroll(item: Layout): Layout {
+export function unroll(item: Layout): UnrolledLayout | UnrolledLayout[] {
   if (isLine(item)) {
     return unrollLine(item);
   }
@@ -11,7 +19,7 @@ export function unroll(item: Layout): Layout {
   return item;
 }
 
-function unrollArray(array: Layout[]): Layout[] {
+function unrollArray(array: Layout[]): UnrolledLayout[] {
   const flatArray = array.flatMap(unroll);
 
   // No need to split when dealing with homogenous array
@@ -19,7 +27,7 @@ function unrollArray(array: Layout[]): Layout[] {
     return flatArray;
   }
 
-  const results: Layout[] = [];
+  const results: UnrolledLayout[] = [];
   flatArray.forEach((item) => {
     if (isLine(item)) {
       results.push(item);
@@ -35,12 +43,12 @@ function unrollArray(array: Layout[]): Layout[] {
   return results;
 }
 
-function unrollLine(line: Line): Line[] {
+function unrollLine(line: Line): UnrolledLine[] {
   const lineItems = unrollArray(line.items);
   if (lineItems.length === 0) {
     return [{ ...line, items: [] }];
   }
-  if (lineItems.every(isLine)) {
+  if (lineItems.every(isUnrolledLine)) {
     return lineItems.map((subLine) => {
       if (line.indent) {
         return { ...subLine, indent: line.indent + (subLine.indent || 0) };
@@ -49,12 +57,12 @@ function unrollLine(line: Line): Line[] {
       }
     });
   }
-  if (lineItems.every((x) => isString(x) || isNumber(x))) {
+  if (lineItems.every(isLayoutLiteral)) {
     return [{ ...line, items: lineItems }];
   }
 
   // gather leading strings/numbers to separate line
-  const lines: Line[] = [];
+  const lines: UnrolledLine[] = [];
   lineItems.forEach((item) => {
     if (isLine(item)) {
       lines.push(item);
@@ -71,7 +79,9 @@ function unrollLine(line: Line): Line[] {
 }
 
 // After the normal unroll is done, converts remaining top-level strings to lines
-export function remainingStringsToLines(items: Layout[]): Line[] {
+export function remainingStringsToLines(
+  items: UnrolledLayout[]
+): UnrolledLine[] {
   return items.map((item) => {
     return isLine(item) ? item : { layout: "line", items: [item] };
   });
