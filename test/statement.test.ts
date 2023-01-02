@@ -10,4 +10,11 @@ describe("statement", () => {
         2
     `);
   });
+
+  it("formats trailing semicolon", () => {
+    expect(format(`SELECT 1;`)).toBe(dedent`
+      SELECT
+        1;
+    `);
+  });
 });
