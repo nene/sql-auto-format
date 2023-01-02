@@ -1,4 +1,4 @@
-import { isString, last } from "./utils";
+import { isArray, isString, last } from "./utils";
 import {
   Line,
   isLine,
@@ -11,7 +11,7 @@ import {
 
 export function unrollToLines(layout: Layout): UnrolledLine[] {
   const unrolledItems = unroll(layout);
-  if (!(unrolledItems instanceof Array)) {
+  if (!isArray(unrolledItems)) {
     throw new Error(
       `Expected array, instead got ${JSON.stringify(unrolledItems)}`
     );
@@ -26,7 +26,7 @@ export function unroll(item: Layout): UnrolledLayout | UnrolledLayout[] {
   if (isLine(item)) {
     return unrollLine(item);
   }
-  if (item instanceof Array) {
+  if (isArray(item)) {
     return unrollArray(item);
   }
   return item;

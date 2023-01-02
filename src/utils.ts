@@ -17,6 +17,9 @@ export const isNumber = (x: any): x is number => typeof x === "number";
 export const isObject = (x: any): x is Record<string, any> =>
   typeof x === "object" && x !== null && !(x instanceof Array);
 
+/** Type guard for arrays */
+export const isArray = (x: any): x is any[] => x instanceof Array;
+
 /* Removes elements from the start of the array that match the predicate */
 export const dropWhile = <T>(fn: (x: T) => boolean, arr: T[]): T[] => {
   let i = 0;

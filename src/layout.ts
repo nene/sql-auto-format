@@ -1,6 +1,6 @@
 import { Node, Whitespace, cstTransformer, Statement } from "sql-parser-cst";
 import { Layout, Line, WS } from "./LayoutTypes";
-import { isDefined, isNumber, isString } from "./utils";
+import { isArray, isDefined, isNumber, isString } from "./utils";
 
 type NodeArray = (Node | NodeArray | string | WS | undefined)[];
 
@@ -8,7 +8,7 @@ export function layout(node: Node | string | WS | NodeArray): Layout {
   if (isString(node) || isNumber(node)) {
     return node;
   }
-  if (node instanceof Array) {
+  if (isArray(node)) {
     return node.filter(isDefined).map(layout);
   }
 
