@@ -1,4 +1,4 @@
-import { Node, Whitespace, cstTransformer } from "sql-parser-cst";
+import { Node, Whitespace, cstTransformer, Statement } from "sql-parser-cst";
 import { isDefined, isObject, isString } from "./utils";
 
 export type Layout = Line | string | Layout[];
@@ -49,10 +49,19 @@ const layoutComments = (items?: Whitespace[], node?: Node): Layout[] => {
       } else {
         result.push(" ", ws.text);
       }
+    } else if (
+      node &&
+      isStatement(node) &&
+      ws.type === "newline" &&
+      prev?.type === "newline"
+    ) {
+      result.push(line());
     }
   });
   return result;
 };
+
+const isStatement = (node: Node): node is Statement => /_stmt$/.test(node.type);
 
 function spacedLayout(nodes: NodeArray, separators = [" "]): Layout {
   return joinLayoutArray(layout(nodes) as Layout[], separators);
