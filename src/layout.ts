@@ -24,7 +24,7 @@ export function layout(node: Node | string | NodeArray): Layout {
   }
 
   const leading = layoutComments(node.leading, node);
-  const trailing = layoutComments(node.trailing);
+  const trailing = layoutComments(node.trailing, node);
   if (leading.length || trailing.length) {
     return [...leading, layoutNode(node), ...trailing];
   }
@@ -32,7 +32,10 @@ export function layout(node: Node | string | NodeArray): Layout {
   return layoutNode(node);
 }
 
-const layoutComments = (items?: Whitespace[], node?: Node): Layout[] => {
+const layoutComments = (
+  items: Whitespace[] | undefined,
+  node: Node
+): Layout[] => {
   const result: Layout[] = [];
   (items || []).forEach((ws, i, arr) => {
     const prev = arr[i - 1];
@@ -49,7 +52,6 @@ const layoutComments = (items?: Whitespace[], node?: Node): Layout[] => {
         result.push(" ", ws.text);
       }
     } else if (
-      node &&
       isStatement(node) &&
       ws.type === "newline" &&
       prev?.type === "newline"
