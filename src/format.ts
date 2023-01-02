@@ -2,6 +2,7 @@ import { parse, ParserOptions, Program } from "sql-parser-cst";
 import { collapseSpaces } from "./collapseSpaces";
 import { layout } from "./layout";
 import { serialize } from "./serialize";
+import { startWithEmptyLine } from "./startWithEmptyLine";
 import { remainingStringsToLines, unroll } from "./unroll";
 
 export interface FormatOptions {
@@ -22,7 +23,7 @@ export function format(sql: string, options: FormatOptions): string {
 }
 
 function formatCst(node: Program): string {
-  const layoutItems = unroll(layout(node));
+  const layoutItems = unroll(layout(startWithEmptyLine(node)));
   if (!(layoutItems instanceof Array)) {
     throw new Error(
       `Expected array, instead got ${JSON.stringify(layoutItems)}`

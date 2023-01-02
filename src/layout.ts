@@ -36,15 +36,14 @@ const layoutComments = (items?: Whitespace[], node?: Node): Layout[] => {
   const result: Layout[] = [];
   (items || []).forEach((ws, i, arr) => {
     const prev = arr[i - 1];
-    const isFirstLine = i === 0 && node?.type === "program";
     if (ws.type === "block_comment") {
-      if (prev?.type === "newline" || isFirstLine) {
+      if (prev?.type === "newline") {
         result.push(line(ws.text));
       } else {
         result.push(" ", ws.text, " ");
       }
     } else if (ws.type === "line_comment") {
-      if (prev?.type === "newline" || isFirstLine) {
+      if (prev?.type === "newline") {
         result.push(line(ws.text));
       } else {
         result.push(" ", ws.text);
