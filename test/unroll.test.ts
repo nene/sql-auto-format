@@ -1,5 +1,5 @@
 import { unroll } from "../src/unroll";
-import { Line } from "../src/layout";
+import { Line } from "../src/LayoutTypes";
 
 describe("format: unroll()", () => {
   it("converts line to one-item array", () => {

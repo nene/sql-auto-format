@@ -1,5 +1,5 @@
 import { dropWhile, last } from "./utils";
-import { Line, WS } from "./layout";
+import { Line, WS } from "./LayoutTypes";
 
 export function collapseSpaces(lines: Line[]): Line[] {
   return lines.map((line) => ({

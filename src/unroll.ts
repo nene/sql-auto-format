@@ -1,5 +1,5 @@
 import { isNumber, isString, last } from "./utils";
-import { Line, isLine, Layout } from "./layout";
+import { Line, isLine, Layout } from "./LayoutTypes";
 
 export function unroll(item: Layout): Layout {
   if (isLine(item)) {

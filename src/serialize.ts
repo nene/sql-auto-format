@@ -1,4 +1,4 @@
-import { isLine, Layout, Line, WS } from "./layout";
+import { isLine, Layout, Line, WS } from "./LayoutTypes";
 
 export function serialize(lines: Line[]): string {
   const INDENT = "  ";
