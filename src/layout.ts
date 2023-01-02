@@ -36,7 +36,7 @@ const layoutWhitespace = (
       }
     } else if (ws.type === "line_comment") {
       if (prev?.type === "newline") {
-        result.push(line(ws.text));
+        result.push(line(ws.text, WS.newline));
       } else {
         result.push(WS.space, ws.text, WS.newline);
       }

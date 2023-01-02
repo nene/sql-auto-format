@@ -49,6 +49,21 @@ describe("comments", () => {
     `);
   });
 
+  it("formats separate-line line-comment followed expression", () => {
+    expect(
+      format(
+        `SELECT foo
+        -- line comment
+        + 5`
+      )
+    ).toBe(dedent`
+      SELECT
+        foo
+        -- line comment
+        + 5
+    `);
+  });
+
   it("formats inline block-comment", () => {
     expect(format(`SELECT col1 + 3 /* inline */ AS c1`)).toBe(dedent`
       SELECT
