@@ -23,8 +23,8 @@ export function layout(node: Node | string | NodeArray): Layout {
     return node.filter(isDefined).map(layout);
   }
 
-  const leading = layoutComments(node.leading, node);
-  const trailing = layoutComments(node.trailing, node);
+  const leading = layoutWhitespace(node.leading, node);
+  const trailing = layoutWhitespace(node.trailing, node);
   if (leading.length || trailing.length) {
     return [...leading, layoutNode(node), ...trailing];
   }
@@ -32,12 +32,12 @@ export function layout(node: Node | string | NodeArray): Layout {
   return layoutNode(node);
 }
 
-const layoutComments = (
-  items: Whitespace[] | undefined,
+const layoutWhitespace = (
+  whitespaceItems: Whitespace[] | undefined,
   node: Node
 ): Layout[] => {
   const result: Layout[] = [];
-  (items || []).forEach((ws, i, arr) => {
+  (whitespaceItems || []).forEach((ws, i, arr) => {
     const prev = arr[i - 1];
     if (ws.type === "block_comment") {
       if (prev?.type === "newline") {
