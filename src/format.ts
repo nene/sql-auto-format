@@ -1,4 +1,5 @@
 import { parse, ParserOptions, Program } from "sql-parser-cst";
+import { Box } from "./Box";
 import { collapseSpaces } from "./collapseSpaces";
 import { layout } from "./layout";
 import { serialize } from "./serialize";
@@ -23,7 +24,12 @@ export function format(sql: string, options: FormatOptions): string {
 }
 
 function formatCst(node: Program): string {
-  return serialize(
-    collapseSpaces(unrollToLines(layout(startWithEmptyLine(node))))
-  ).trim();
+  return new Box(node)
+    .map(startWithEmptyLine)
+    .map(layout)
+    .map(unrollToLines)
+    .map(collapseSpaces)
+    .map(serialize)
+    .map((s) => s.trim())
+    .unbox();
 }
