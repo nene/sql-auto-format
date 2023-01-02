@@ -15,6 +15,8 @@ const serializeWhitespace = (item: LayoutLiteral): string => {
   switch (item) {
     case WS.space:
       return " ";
+    case WS.newline:
+      throw new Error("Unexpected newline encountered in serialize()");
     default:
       return item;
   }

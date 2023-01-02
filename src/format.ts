@@ -3,6 +3,7 @@ import { Box } from "./Box";
 import { collapseSpaces } from "./collapseSpaces";
 import { layout } from "./layout";
 import { serialize } from "./serialize";
+import { splitLines } from "./splitLines";
 import { startWithEmptyLine } from "./startWithEmptyLine";
 import { unrollToLines } from "./unroll";
 
@@ -28,6 +29,7 @@ function formatCst(node: Program): string {
     .map(startWithEmptyLine)
     .map(layout)
     .map(unrollToLines)
+    .map(splitLines)
     .map(collapseSpaces)
     .map(serialize)
     .map((s) => s.trim())

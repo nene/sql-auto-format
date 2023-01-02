@@ -3,6 +3,7 @@ import { isNumber, isObject, isString } from "./utils";
 // Whitespace items
 export enum WS {
   space = 1,
+  newline = 2,
 }
 
 export type LayoutLiteral = string | WS;

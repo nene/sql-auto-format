@@ -48,6 +48,7 @@ describe("format: layout()", () => {
             [
               1,
               "-- comment",
+              2,
               [
                 { layout: "line", items: ["FROM"] },
                 { layout: "line", indent: 1, items: ["tbl"] },

@@ -36,6 +36,19 @@ describe("comments", () => {
     `);
   });
 
+  it("formats trailing comment followed expression", () => {
+    expect(
+      format(
+        `SELECT foo -- trailing comment
+        + 5`
+      )
+    ).toBe(dedent`
+      SELECT
+        foo -- trailing comment
+        + 5
+    `);
+  });
+
   it("formats inline block-comment", () => {
     expect(format(`SELECT col1 + 3 /* inline */ AS c1`)).toBe(dedent`
       SELECT

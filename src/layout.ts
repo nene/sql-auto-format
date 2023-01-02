@@ -38,7 +38,7 @@ const layoutWhitespace = (
       if (prev?.type === "newline") {
         result.push(line(ws.text));
       } else {
-        result.push(WS.space, ws.text);
+        result.push(WS.space, ws.text, WS.newline);
       }
     } else if (
       isStatement(node) &&
