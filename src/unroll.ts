@@ -1,4 +1,4 @@
-import { isArray, isString, last } from "./utils";
+import { arrayWrap, isArray, isString, last } from "./utils";
 import {
   Line,
   isLine,
@@ -10,14 +10,8 @@ import {
 } from "./LayoutTypes";
 
 export function unrollToLines(layout: Layout): UnrolledLine[] {
-  const unrolledItems = unroll(layout);
-  if (!isArray(unrolledItems)) {
-    throw new Error(
-      `Expected array, instead got ${JSON.stringify(unrolledItems)}`
-    );
-  }
   // After the normal unroll is done, convert remaining top-level strings to lines
-  return unrolledItems.map((item) => {
+  return arrayWrap(unroll(layout)).map((item) => {
     return isLine(item) ? item : { layout: "line", items: [item] };
   });
 }

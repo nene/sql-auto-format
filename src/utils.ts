@@ -20,7 +20,7 @@ export const isObject = (x: any): x is Record<string, any> =>
 /** Type guard for arrays */
 export const isArray = (x: any): x is any[] => x instanceof Array;
 
-/* Removes elements from the start of the array that match the predicate */
+/** Removes elements from the start of the array that match the predicate */
 export const dropWhile = <T>(fn: (x: T) => boolean, arr: T[]): T[] => {
   let i = 0;
   while (fn(arr[i])) {
@@ -28,3 +28,6 @@ export const dropWhile = <T>(fn: (x: T) => boolean, arr: T[]): T[] => {
   }
   return i > 0 ? arr.slice(i) : arr;
 };
+
+/** Wraps item inside array when it's not an array already */
+export const arrayWrap = <T>(x: T | T[]): T[] => (isArray(x) ? x : [x]);
