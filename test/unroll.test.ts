@@ -115,7 +115,12 @@ describe("format: unroll()", () => {
   });
 
   it("nested strings-arrays get converted to flat string array", () => {
-    expect(unroll(["1", ["2", ["3"], "4"]])).toEqual(["1", "2", "3", "4"]);
+    expect(unroll(["1", ["2", ["3"], "4"]])).toEqual([
+      {
+        layout: "line",
+        items: ["1", "2", "3", "4"],
+      },
+    ]);
   });
 
   it("nested strings-arrays inside a line get converted to flat string array", () => {
@@ -132,8 +137,7 @@ describe("format: unroll()", () => {
 
   it("a line after strings remains the same", () => {
     expect(unroll(["foo", "bar", { layout: "line", items: ["sub", "line"] }])).toEqual([
-      "foo",
-      "bar",
+      { layout: "line", items: ["foo", "bar"] },
       { layout: "line", items: ["sub", "line"] },
     ]);
   });
@@ -141,7 +145,10 @@ describe("format: unroll()", () => {
   it("a line between strings gets concatenated with strings after it", () => {
     expect(
       unroll(["foo", "bar", { layout: "line", items: ["sub", "line"] }, "baz", "zap"])
-    ).toEqual(["foo", "bar", { layout: "line", items: ["sub", "line", "baz", "zap"] }]);
+    ).toEqual([
+      { layout: "line", items: ["foo", "bar"] },
+      { layout: "line", items: ["sub", "line", "baz", "zap"] },
+    ]);
   });
 
   it("a line between strings inside a line gets broken up to two lines", () => {

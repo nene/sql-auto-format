@@ -5,7 +5,7 @@ import { layout } from "./layout";
 import { serialize } from "./serialize";
 import { splitLines } from "./splitLines";
 import { startWithEmptyLine } from "./startWithEmptyLine";
-import { unrollToLines } from "./unroll";
+import { unroll } from "./unroll";
 
 export interface FormatOptions {
   dialect: ParserOptions["dialect"];
@@ -28,7 +28,7 @@ function formatCst(node: Program): string {
   return new Box(node)
     .map(startWithEmptyLine)
     .map(layout)
-    .map(unrollToLines)
+    .map(unroll)
     .map(splitLines)
     .map(collapseSpaces)
     .map(serialize)
