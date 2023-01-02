@@ -143,4 +143,13 @@ describe("format: unroll()", () => {
       unroll(["foo", "bar", { layout: "line", items: ["sub", "line"] }, "baz", "zap"])
     ).toEqual(["foo", "bar", { layout: "line", items: ["sub", "line", "baz", "zap"] }]);
   });
+
+  it("empty line is preserved", () => {
+    const lines: Line[] = [
+      { layout: "line", items: ["first"] },
+      { layout: "line", items: [] },
+      { layout: "line", items: ["second"] },
+    ];
+    expect(unroll(lines)).toEqual(lines);
+  });
 });

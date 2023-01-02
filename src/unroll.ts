@@ -37,7 +37,7 @@ function unrollArray(array: Layout[]): Layout[] {
 
 function unrollLine(line: Line): Line[] {
   const lineItems = unrollArray(line.items);
-  if (lineItems.every(isLine)) {
+  if (lineItems.length > 0 && lineItems.every(isLine)) {
     return lineItems.map((subLine) => {
       if (line.indent) {
         return { ...subLine, indent: line.indent + (subLine.indent || 0) };

@@ -28,5 +28,5 @@ function formatCst(node: Program): string {
       `Expected array, instead got ${JSON.stringify(layoutItems)}`
     );
   }
-  return serialize(collapseSpaces(remainingStringsToLines(layoutItems)));
+  return serialize(collapseSpaces(remainingStringsToLines(layoutItems))).trim();
 }
