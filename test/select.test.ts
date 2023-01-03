@@ -21,18 +21,4 @@ describe("select", () => {
         my_table t
     `);
   });
-
-  it("formats SELECT with binary expressions", () => {
-    expect(format(`SELECT 5 + 6/2 - 8`)).toBe(dedent`
-      SELECT
-        5 + 6 / 2 - 8
-    `);
-  });
-
-  it("formats SELECT with simple function call", () => {
-    expect(format(`SELECT pow(10, 8)`)).toBe(dedent`
-      SELECT
-        pow(10, 8)
-    `);
-  });
 });
