@@ -40,4 +40,16 @@ describe("select", () => {
         LEFT JOIN table2 ON table1.id = table2.user_id
     `);
   });
+
+  it("formats sub-select", () => {
+    expect(format(`SELECT name IN (SELECT fname FROM person_names)`)).toBe(dedent`
+      SELECT
+        name IN (
+          SELECT
+            fname
+          FROM
+            person_names
+        )
+    `);
+  });
 });
