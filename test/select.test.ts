@@ -22,6 +22,14 @@ describe("select", () => {
     `);
   });
 
+  it("formats SELECT with comments before first column", () => {
+    expect(format(`SELECT /* comment */ foo`)).toBe(dedent`
+      SELECT
+        /* comment */
+        foo
+    `);
+  });
+
   it("formats SELECT with aliases", () => {
     expect(format(`SELECT foo AS f FROM my_table t`)).toBe(dedent`
       SELECT

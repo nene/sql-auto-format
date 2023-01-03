@@ -1,4 +1,10 @@
-import { Node, Whitespace, cstTransformer, Statement } from "sql-parser-cst";
+import {
+  Node,
+  Whitespace,
+  cstTransformer,
+  Statement,
+  ListExpr,
+} from "sql-parser-cst";
 import { Layout, Line, WS } from "./LayoutTypes";
 import { arrayWrap, isArray, isDefined, isNumber, isString } from "./utils";
 
@@ -12,13 +18,19 @@ export function layout(node: Node | string | WS | NodeArray): Layout {
     return node.filter(isDefined).map(layout);
   }
 
+  return withWhitespace(node, layoutNode);
+}
+
+function withWhitespace<T extends Node>(
+  node: T,
+  layoutFn: (node: T) => Layout
+): Layout {
   const leading = layoutWhitespace(node.leading, node);
   const trailing = layoutWhitespace(node.trailing, node);
   if (leading.length || trailing.length) {
-    return [...leading, layoutNode(node), ...trailing];
+    return [...leading, layoutFn(node), ...trailing];
   }
-
-  return layoutNode(node);
+  return layoutFn(node);
 }
 
 const layoutWhitespace = (
@@ -74,6 +86,12 @@ function joinLayoutArray(
   return result;
 }
 
+function layoutMultilineListExpr(node: ListExpr): Layout[] {
+  return arrayWrap(
+    withWhitespace(node, (n) => n.items.map(layout).map(lineWithSeparator(",")))
+  );
+}
+
 const layoutNode = cstTransformer<Layout>({
   program: (node) => node.statements.map(layout).map(lineWithSeparator(";")),
   empty: () => [],
@@ -83,7 +101,7 @@ const layoutNode = cstTransformer<Layout>({
   // SELECT
   select_clause: (node) => [
     line(layout(node.selectKw)),
-    indent(...node.columns.items.map(layout).map(lineWithSeparator(","))),
+    indent(...layoutMultilineListExpr(node.columns)),
   ],
   // FROM
   from_clause: (node) => [line(layout(node.fromKw)), indent(layout(node.expr))],
@@ -104,9 +122,7 @@ const layoutNode = cstTransformer<Layout>({
   // ORDER BY
   order_by_clause: (node) => [
     line(spacedLayout(node.orderByKw)),
-    indent(
-      ...node.specifications.items.map(layout).map(lineWithSeparator(","))
-    ),
+    indent(...layoutMultilineListExpr(node.specifications)),
   ],
   sort_specification: (node) => spacedLayout([node.expr, node.orderKw]),
   limit_clause: (node) => [
@@ -120,7 +136,7 @@ const layoutNode = cstTransformer<Layout>({
     }
     return [
       line(spacedLayout([node.createKw, node.tableKw, node.name, "("])),
-      indent(node.columns.expr.items.map(layout).map(lineWithSeparator(","))),
+      indent(...layoutMultilineListExpr(node.columns.expr)),
       line(")"),
     ];
   },
