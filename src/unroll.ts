@@ -73,7 +73,7 @@ function unrollLine(line: Line): UnrolledLine[] {
   if (lineItems.every(isUnrolledLine)) {
     return lineItems.map((subLine) => {
       if (line.indent) {
-        return { ...subLine, indent: line.indent + (subLine.indent || 0) };
+        return { ...subLine, indent: sumIndents(line, subLine) };
       } else {
         return subLine;
       }
@@ -87,15 +87,22 @@ function unrollLine(line: Line): UnrolledLine[] {
   const lines: UnrolledLine[] = [];
   lineItems.forEach((item) => {
     if (isLine(item)) {
-      lines.push(item);
+      lines.push({ ...item, indent: sumIndents(line, item) });
     } else {
       const lastLine = last(lines);
       if (isLine(lastLine)) {
         lastLine.items.push(item);
       } else {
-        lines.push({ layout: "line", items: [item] });
+        lines.push({ ...line, items: [item] });
       }
     }
   });
   return lines;
+}
+
+function sumIndents(line1: Line, line2: Line): number | undefined {
+  if (!line1.indent && !line2.indent) {
+    return undefined;
+  }
+  return (line1.indent || 0) + (line2.indent || 0);
 }

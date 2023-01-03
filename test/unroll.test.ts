@@ -114,6 +114,24 @@ describe("format: unroll()", () => {
     ]);
   });
 
+  it("literals and lines inside indented line get the indents combined", () => {
+    expect(
+      unroll({
+        layout: "line",
+        indent: 1,
+        items: [
+          "blah",
+          { layout: "line", items: ["foo"] },
+          { layout: "line", items: ["bar"], indent: 1 },
+        ],
+      })
+    ).toEqual([
+      { layout: "line", indent: 1, items: ["blah"] },
+      { layout: "line", indent: 1, items: ["foo"] },
+      { layout: "line", indent: 2, items: ["bar"] },
+    ]);
+  });
+
   it("nested strings-arrays get converted to flat string array", () => {
     expect(unroll(["1", ["2", ["3"], "4"]])).toEqual([
       {
