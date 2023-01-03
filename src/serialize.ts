@@ -1,12 +1,12 @@
+import { curry } from "ramda";
 import { LayoutLiteral, UnrolledLine, WS } from "./LayoutTypes";
 
 interface SerializeOptions {
   tabWidth: number;
 }
 
-export const serialize =
-  (options: SerializeOptions) =>
-  (lines: UnrolledLine[]): string => {
+export const serialize = curry(
+  (options: SerializeOptions, lines: UnrolledLine[]): string => {
     const INDENT = " ".repeat(options.tabWidth);
     return lines
       .map(
@@ -15,7 +15,8 @@ export const serialize =
           line.items.map(serializeWhitespace).join("")
       )
       .join("\n");
-  };
+  }
+);
 
 const serializeWhitespace = (item: LayoutLiteral): string => {
   switch (item) {
