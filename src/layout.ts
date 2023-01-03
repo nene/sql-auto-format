@@ -125,6 +125,7 @@ const layoutNode = cstTransformer<Layout>({
     indent(...layoutMultilineListExpr(node.specifications)),
   ],
   sort_specification: (node) => spacedLayout([node.expr, node.orderKw]),
+  // LIMIT
   limit_clause: (node) => [
     line(layout(node.limitKw)),
     indent(layout(node.count)),
