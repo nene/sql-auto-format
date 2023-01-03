@@ -87,6 +87,11 @@ const layoutNode = cstTransformer<Layout>({
   ],
   // FROM
   from_clause: (node) => [line(layout(node.fromKw)), indent(layout(node.expr))],
+  // WHERE
+  where_clause: (node) => [
+    line(layout(node.whereKw)),
+    indent(layout(node.expr)),
+  ],
 
   create_table_stmt: (node) => {
     if (!node.columns) {
