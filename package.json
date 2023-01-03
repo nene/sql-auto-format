@@ -26,6 +26,8 @@
     "lint": "eslint src test"
   },
   "dependencies": {
+    "@types/ramda": "^0.28.20",
+    "ramda": "^0.28.0",
     "sql-parser-cst": "^0.10.0"
   },
   "devDependencies": {
