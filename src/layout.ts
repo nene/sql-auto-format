@@ -92,6 +92,7 @@ const layoutNode = cstTransformer<Layout>({
     line(layout(node.whereKw)),
     indent(layout(node.expr)),
   ],
+  // ORDER BY
   order_by_clause: (node) => [
     line(spacedLayout(node.orderByKw)),
     indent(
@@ -99,6 +100,10 @@ const layoutNode = cstTransformer<Layout>({
     ),
   ],
   sort_specification: (node) => spacedLayout([node.expr, node.orderKw]),
+  limit_clause: (node) => [
+    line(layout(node.limitKw)),
+    indent(layout(node.count)),
+  ],
 
   create_table_stmt: (node) => {
     if (!node.columns) {

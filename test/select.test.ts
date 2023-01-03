@@ -3,8 +3,9 @@ import dedent from "dedent-js";
 
 describe("select", () => {
   it("formats basic SELECT", () => {
-    expect(format(`SELECT foo, bar, baz FROM my_table WHERE x > 10 ORDER BY lname, fname DESC`))
-      .toBe(dedent`
+    expect(
+      format(`SELECT foo, bar, baz FROM my_table WHERE x > 10 ORDER BY lname, fname DESC LIMIT 25`)
+    ).toBe(dedent`
       SELECT
         foo,
         bar,
@@ -16,6 +17,8 @@ describe("select", () => {
       ORDER BY
         lname,
         fname DESC
+      LIMIT
+        25
     `);
   });
 
