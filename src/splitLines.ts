@@ -1,5 +1,5 @@
 import { dropWhile, dropLastWhile, last } from "ramda";
-import { LayoutLiteral, UnrolledLine, WS } from "./LayoutTypes";
+import { isNewline, UnrolledLine, WS } from "./LayoutTypes";
 
 export function splitLines(lines: UnrolledLine[]): UnrolledLine[] {
   return lines.flatMap((line) => {
@@ -27,9 +27,5 @@ function splitLine(line: UnrolledLine): UnrolledLine[] {
   return lines;
 }
 
-const trimLeading = (items: LayoutLiteral[]) => dropWhile(isNewline, items);
-
-const trimTrailing = (items: LayoutLiteral[]) =>
-  dropLastWhile(isNewline, items);
-
-const isNewline = (x: LayoutLiteral) => x === WS.newline;
+const trimLeading = dropWhile(isNewline);
+const trimTrailing = dropLastWhile(isNewline);

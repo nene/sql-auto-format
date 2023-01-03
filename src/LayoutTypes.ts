@@ -33,3 +33,9 @@ export const isUnrolledLine = (item: UnrolledLayout): item is UnrolledLine =>
 
 export const isLayoutLiteral = (item: Layout): item is string | WS =>
   isNumber(item) || isString(item);
+
+export const isNewline = (item: LayoutLiteral): item is WS.newline =>
+  item === WS.newline;
+
+export const isSpace = (item: LayoutLiteral): item is WS.space =>
+  item === WS.space;

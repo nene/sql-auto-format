@@ -1,5 +1,5 @@
 import { dropWhile, dropLastWhile, last } from "ramda";
-import { LayoutLiteral, UnrolledLine, WS } from "./LayoutTypes";
+import { isSpace, LayoutLiteral, UnrolledLine, WS } from "./LayoutTypes";
 
 export function collapseSpaces(lines: UnrolledLine[]): UnrolledLine[] {
   return lines.map((line) => ({
@@ -8,11 +8,8 @@ export function collapseSpaces(lines: UnrolledLine[]): UnrolledLine[] {
   }));
 }
 
-const trimLeading = (items: LayoutLiteral[]) => dropWhile(isSpace, items);
-
-const trimTrailing = (items: LayoutLiteral[]) => dropLastWhile(isSpace, items);
-
-const isSpace = (x: LayoutLiteral) => x === WS.space;
+const trimLeading = dropWhile(isSpace);
+const trimTrailing = dropLastWhile(isSpace);
 
 const trimRepeating = (items: LayoutLiteral[]) => {
   const result: LayoutLiteral[] = [];
