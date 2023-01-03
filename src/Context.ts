@@ -1,9 +1,5 @@
+import { FuncCall, Node } from "sql-parser-cst";
 import { isArray, isObject, isString } from "./utils";
-
-type Ws = { type: "comment" };
-type NumberLiteral = { type: "number_literal"; value: number; leading: Ws[] };
-type FuncCall = { type: "func_call"; name: string; params: NumberLiteral[] };
-type Node = FuncCall | NumberLiteral;
 
 type ArrayElement<A> = A extends readonly (infer T)[] ? T : never;
 
@@ -47,8 +43,11 @@ const isNodeArray = (x: any): x is Node[] => isArray(x) && x.every(isNode);
 
 const ctx = new Context({
   type: "func_call",
-  name: "sqrt",
-  params: [{ type: "number_literal", value: 5 }],
+  name: { type: "identifier", name: "sqrt", text: "sqrt" },
+  args: {
+    type: "paren_expr",
+    expr: { type: "func_args", args: { type: "list_expr", items: [] } },
+  },
 } as FuncCall);
 
-ctx.get("params")[0].get("leading");
+ctx.get("args")?.get("expr").get("args").get("items");
