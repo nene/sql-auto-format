@@ -1,5 +1,6 @@
+import { dropWhile } from "ramda";
+import { last } from "./utils";
 import { LayoutLiteral, UnrolledLine, WS } from "./LayoutTypes";
-import { dropWhile, last } from "./utils";
 
 export function splitLines(lines: UnrolledLine[]): UnrolledLine[] {
   return lines.flatMap((line) => {
