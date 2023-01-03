@@ -1,6 +1,8 @@
 import { FuncCall, Node } from "sql-parser-cst";
 import { isArray, isObject, isString } from "./utils";
 
+// Extracts element type from array type
+// https://stackoverflow.com/a/57447842/15982
 type ArrayElement<A> = A extends readonly (infer T)[] ? T : never;
 
 type MaybeContext<T> = T extends Node
