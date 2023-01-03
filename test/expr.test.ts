@@ -9,6 +9,13 @@ describe("expr", () => {
     `);
   });
 
+  it("formats parenthesized expressions", () => {
+    expect(format(`SELECT (5 + 6)/(2 - 8)`)).toBe(dedent`
+      SELECT
+        (5 + 6) / (2 - 8)
+    `);
+  });
+
   it("formats simple function call", () => {
     expect(format(`SELECT pow(10,8)`)).toBe(dedent`
       SELECT
