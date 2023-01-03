@@ -1,4 +1,5 @@
-import { arrayWrap, isArray, isString, last } from "./utils";
+import { last } from "ramda";
+import { arrayWrap, isArray, isString } from "./utils";
 import {
   Line,
   isLine,
@@ -55,7 +56,7 @@ function unrollArray(array: Layout[]): UnrolledLayout[] {
       results.push(item);
     } else {
       const lastItem = last(results);
-      if (isLine(lastItem)) {
+      if (lastItem && isLine(lastItem)) {
         lastItem.items.push(item);
       } else {
         results.push(item);
@@ -90,7 +91,7 @@ function unrollLine(line: Line): UnrolledLine[] {
       lines.push({ ...item, indent: sumIndents(line, item) });
     } else {
       const lastLine = last(lines);
-      if (isLine(lastLine)) {
+      if (lastLine && isLine(lastLine)) {
         lastLine.items.push(item);
       } else {
         lines.push({ ...line, items: [item] });
