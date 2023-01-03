@@ -1,6 +1,6 @@
 import { Node, Whitespace, cstTransformer, Statement } from "sql-parser-cst";
 import { Layout, Line, WS } from "./LayoutTypes";
-import { isArray, isDefined, isNumber, isString } from "./utils";
+import { arrayWrap, isArray, isDefined, isNumber, isString } from "./utils";
 
 type NodeArray = (Node | NodeArray | string | WS | undefined)[];
 
@@ -54,10 +54,10 @@ const layoutWhitespace = (
 const isStatement = (node: Node): node is Statement => /_stmt$/.test(node.type);
 
 function spacedLayout(
-  nodes: NodeArray,
+  nodes: Node | string | WS | NodeArray,
   separators: (string | WS)[] = [WS.space]
 ): Layout {
-  return joinLayoutArray(layout(nodes) as Layout[], separators);
+  return joinLayoutArray(layout(arrayWrap(nodes)) as Layout[], separators);
 }
 
 function joinLayoutArray(
@@ -87,6 +87,15 @@ const layoutNode = cstTransformer<Layout>({
   ],
   // FROM
   from_clause: (node) => [line(layout(node.fromKw)), indent(layout(node.expr))],
+  join_expr: (node) => [
+    line(layout(node.left)),
+    line(
+      spacedLayout(node.operator),
+      WS.space,
+      spacedLayout([node.right, node.specification])
+    ),
+  ],
+  join_on_specification: (node) => spacedLayout([node.onKw, node.expr]),
   // WHERE
   where_clause: (node) => [
     line(layout(node.whereKw)),

@@ -30,4 +30,14 @@ describe("select", () => {
         my_table t
     `);
   });
+
+  it("formats basic JOIN", () => {
+    expect(format(`SELECT * FROM table1 LEFT JOIN table2 ON table1.id=table2.user_id`)).toBe(dedent`
+      SELECT
+        *
+      FROM
+        table1
+        LEFT JOIN table2 ON table1.id = table2.user_id
+    `);
+  });
 });
