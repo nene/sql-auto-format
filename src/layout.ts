@@ -105,6 +105,8 @@ const layoutNode = cstTransformer<Layout>({
   binary_expr: (node) => spacedLayout([node.left, node.operator, node.right]),
   paren_expr: (node) => layout(["(", node.expr, ")"]),
   list_expr: (node) => spacedLayout(node.items, [",", WS.space]),
+  func_call: (node) => layout([node.name, node.args]),
+  func_args: (node) => layout(node.args),
 
   // Tables & columns
   member_expr: (node) =>

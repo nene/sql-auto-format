@@ -28,4 +28,11 @@ describe("select", () => {
         5 + 6 / 2 - 8
     `);
   });
+
+  it("formats SELECT with simple function call", () => {
+    expect(format(`SELECT pow(10, 8)`)).toBe(dedent`
+      SELECT
+        pow(10, 8)
+    `);
+  });
 });
