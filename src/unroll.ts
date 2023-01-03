@@ -7,44 +7,29 @@ import {
   UnrolledLine,
   isUnrolledLine,
   isLayoutLiteral,
-  LayoutLiteral,
 } from "./LayoutTypes";
 
 export function unroll(layout: Layout): UnrolledLine[] {
-  // After the normal unroll is done, convert remaining top-level strings to lines
-  const unrolledLayouts = arrayWrap(unrollLayout(layout));
-  return chunkByLayoutType(unrolledLayouts).flatMap(({ chunkType, items }) => {
-    if (chunkType === "lines") {
-      return items;
-    } else {
-      return [{ layout: "line", items }];
-    }
-  });
+  return lonelyLiteralsToLines(arrayWrap(unrollLayout(layout)));
 }
 
-const chunkByLayoutType = (
-  array: UnrolledLayout[]
-): (LinesChunk | LiteralsChunk)[] => {
-  const chunks: (LinesChunk | LiteralsChunk)[] = [];
-  for (const x of array) {
-    const lastChunk = last(chunks);
-    if (isLine(x) && lastChunk?.chunkType === "lines") {
-      lastChunk.items.push(x);
-    } else if (!isLine(x) && lastChunk?.chunkType === "literals") {
-      lastChunk.items.push(x);
+// After the normal unroll is done, converts remaining top-level layout literals to lines
+function lonelyLiteralsToLines(layouts: UnrolledLayout[]): UnrolledLine[] {
+  const lines: UnrolledLine[] = [];
+  let runningLine: UnrolledLine | undefined = undefined;
+  for (const item of layouts) {
+    if (isLine(item)) {
+      lines.push(item);
+      runningLine = undefined;
+    } else if (runningLine) {
+      runningLine.items.push(item);
     } else {
-      if (isLine(x)) {
-        chunks.push({ chunkType: "lines", items: [x] });
-      } else {
-        chunks.push({ chunkType: "literals", items: [x] });
-      }
+      runningLine = { layout: "line", items: [item] };
+      lines.push(runningLine);
     }
   }
-  return chunks;
-};
-
-type LinesChunk = { chunkType: "lines"; items: UnrolledLine[] };
-type LiteralsChunk = { chunkType: "literals"; items: LayoutLiteral[] };
+  return lines;
+}
 
 function unrollLayout(item: Layout): UnrolledLayout | UnrolledLayout[] {
   if (isLine(item)) {
