@@ -1,11 +1,11 @@
-import { parse, ParserOptions, Program } from "sql-parser-cst";
-import { Box } from "./Box";
+import { parse, ParserOptions } from "sql-parser-cst";
 import { collapseSpaces } from "./collapseSpaces";
 import { layout } from "./layout";
 import { serialize } from "./serialize";
 import { splitLines } from "./splitLines";
 import { startWithEmptyLine } from "./startWithEmptyLine";
 import { unroll } from "./unroll";
+import { pipe, trim, curry } from "ramda";
 
 export interface FormatOptions {
   dialect: ParserOptions["dialect"];
@@ -16,14 +16,18 @@ export interface FormatOptions {
  * Takes SQL string and auto-formats it.
  */
 export function format(sql: string, options: FormatOptions): string {
-  return formatCst(
-    parse(sql, {
-      dialect: options.dialect,
-      preserveComments: true,
-      preserveNewlines: true,
-    }),
-    assignDefaults(options)
-  );
+  const cfg = assignDefaults(options);
+
+  return pipe(
+    parseToCst(cfg),
+    startWithEmptyLine,
+    layout,
+    unroll,
+    splitLines,
+    collapseSpaces,
+    serialize(cfg),
+    trim
+  )(sql);
 }
 
 function assignDefaults(options: FormatOptions): Required<FormatOptions> {
@@ -33,14 +37,10 @@ function assignDefaults(options: FormatOptions): Required<FormatOptions> {
   };
 }
 
-function formatCst(node: Program, options: Required<FormatOptions>): string {
-  return new Box(node)
-    .map(startWithEmptyLine)
-    .map(layout)
-    .map(unroll)
-    .map(splitLines)
-    .map(collapseSpaces)
-    .map(serialize(options))
-    .map((s) => s.trim())
-    .unbox();
-}
+const parseToCst = curry((options: FormatOptions, sql: string) => {
+  return parse(sql, {
+    dialect: options.dialect,
+    preserveComments: true,
+    preserveNewlines: true,
+  });
+});
