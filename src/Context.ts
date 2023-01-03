@@ -1,4 +1,4 @@
-import { isArray } from "./utils";
+import { isArray, isObject, isString } from "./utils";
 
 type NumberLiteral = { type: "number_literal"; value: number };
 type FuncCall = { type: "func_call"; name: string; params: NumberLiteral[] };
@@ -20,7 +20,7 @@ export class Context<T extends Node> {
     const value = this.rawNode[key];
     if (isNode(value)) {
       return new Context(value, this) as MaybeContext<T[TKey]>;
-    } else if (isArray(value)) {
+    } else if (isNodeArray(value)) {
       return value.map((v) => new Context(v, this)) as MaybeContext<T[TKey]>;
     } else {
       return value as MaybeContext<T[TKey]>;
@@ -36,10 +36,9 @@ export class Context<T extends Node> {
   }
 }
 
-const isNode = (x: any): x is Node => isObject(x) && typeof x.type === "string";
+const isNode = (x: any): x is Node => isObject(x) && isString(x.type);
 
-const isObject = (x: any): x is Record<string, any> =>
-  typeof x === "object" && x !== null && !(x instanceof Array);
+const isNodeArray = (x: any): x is Node[] => isArray(x) && x.every(isNode);
 
 const ctx = new Context({
   type: "func_call",
