@@ -1,5 +1,5 @@
 import { parse as parseCst } from "sql-parser-cst";
-import { format as originalFormat } from "../src/format";
+import { format as originalFormat, FormatOptions } from "../src/format";
 
 export function parse(sql: string) {
   return parseCst(sql, {
@@ -10,6 +10,6 @@ export function parse(sql: string) {
 }
 
 /** Like the actual format() function, but with a default dialect */
-export function format(sql: string) {
-  return originalFormat(sql, { dialect: "sqlite" });
+export function format(sql: string, options: Partial<FormatOptions> = {}) {
+  return originalFormat(sql, { dialect: "sqlite", ...options });
 }

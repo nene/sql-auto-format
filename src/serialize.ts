@@ -1,15 +1,21 @@
 import { LayoutLiteral, UnrolledLine, WS } from "./LayoutTypes";
 
-export function serialize(lines: UnrolledLine[]): string {
-  const INDENT = "  ";
-  return lines
-    .map(
-      (line) =>
-        INDENT.repeat(line.indent || 0) +
-        line.items.map(serializeWhitespace).join("")
-    )
-    .join("\n");
+interface SerializeOptions {
+  tabWidth: number;
 }
+
+export const serialize =
+  (options: SerializeOptions) =>
+  (lines: UnrolledLine[]): string => {
+    const INDENT = " ".repeat(options.tabWidth);
+    return lines
+      .map(
+        (line) =>
+          INDENT.repeat(line.indent || 0) +
+          line.items.map(serializeWhitespace).join("")
+      )
+      .join("\n");
+  };
 
 const serializeWhitespace = (item: LayoutLiteral): string => {
   switch (item) {

@@ -9,6 +9,7 @@ import { unroll } from "./unroll";
 
 export interface FormatOptions {
   dialect: ParserOptions["dialect"];
+  tabWidth?: number;
 }
 
 /**
@@ -20,18 +21,26 @@ export function format(sql: string, options: FormatOptions): string {
       dialect: options.dialect,
       preserveComments: true,
       preserveNewlines: true,
-    })
+    }),
+    assignDefaults(options)
   );
 }
 
-function formatCst(node: Program): string {
+function assignDefaults(options: FormatOptions): Required<FormatOptions> {
+  return {
+    tabWidth: 2,
+    ...options,
+  };
+}
+
+function formatCst(node: Program, options: Required<FormatOptions>): string {
   return new Box(node)
     .map(startWithEmptyLine)
     .map(layout)
     .map(unroll)
     .map(splitLines)
     .map(collapseSpaces)
-    .map(serialize)
+    .map(serialize(options))
     .map((s) => s.trim())
     .unbox();
 }
