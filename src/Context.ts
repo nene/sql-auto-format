@@ -1,6 +1,7 @@
 import { isArray, isObject, isString } from "./utils";
 
-type NumberLiteral = { type: "number_literal"; value: number };
+type Ws = { type: "comment" };
+type NumberLiteral = { type: "number_literal"; value: number; leading: Ws[] };
 type FuncCall = { type: "func_call"; name: string; params: NumberLiteral[] };
 type Node = FuncCall | NumberLiteral;
 
@@ -36,7 +37,11 @@ export class Context<T extends Node> {
   }
 }
 
-const isNode = (x: any): x is Node => isObject(x) && isString(x.type);
+const isNode = (x: any): x is Node =>
+  isObject(x) &&
+  isString(x.type) &&
+  x.type !== "leading" &&
+  x.type !== "trailing";
 
 const isNodeArray = (x: any): x is Node[] => isArray(x) && x.every(isNode);
 
@@ -46,4 +51,4 @@ const ctx = new Context({
   params: [{ type: "number_literal", value: 5 }],
 } as FuncCall);
 
-ctx.get("params")[0].get("value");
+ctx.get("params")[0].get("leading");
