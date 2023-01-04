@@ -177,7 +177,16 @@ const layoutNode = contextTransformer<Layout>({
   all_columns: () => "*",
 
   // Basic language elements
-  keyword: (ctx) => ctx.get("text"),
+  keyword: (ctx) => {
+    switch (ctx.getOption("keywordCase")) {
+      case "upper":
+        return ctx.get("name");
+      case "lower":
+        return ctx.get("text").toLowerCase();
+      case "preserve":
+        return ctx.get("text");
+    }
+  },
   identifier: (ctx) => ctx.get("text"),
   string_literal: (ctx) => ctx.get("text"),
   number_literal: (ctx) => ctx.get("text"),
