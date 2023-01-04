@@ -11,11 +11,16 @@ type MaybeContext<T> = T extends Node
   ? Context<ArrayElement<T>>[]
   : T;
 
+// Keys of Node objects that have special meaning
+type ReservedKey = "type" | "range" | "leading" | "trailing";
+
 /** Formatting context */
 export class Context<T extends Node> {
   constructor(private rawNode: T, private parentCtx?: Context<Node>) {}
 
-  public get<TKey extends keyof T>(key: TKey): MaybeContext<T[TKey]> {
+  public get<TKey extends Exclude<keyof T, ReservedKey>>(
+    key: TKey
+  ): MaybeContext<T[TKey]> {
     const value = this.rawNode[key];
     if (isNode(value)) {
       return new Context(value, this) as MaybeContext<T[TKey]>;
