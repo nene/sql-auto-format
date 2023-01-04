@@ -1,11 +1,6 @@
-import {
-  Node,
-  Whitespace,
-  cstTransformer,
-  Statement,
-  ListExpr,
-} from "sql-parser-cst";
+import { Node, Whitespace, cstTransformer, ListExpr } from "sql-parser-cst";
 import { Layout, Line, WS } from "./LayoutTypes";
+import { isStatement } from "./node_utils";
 import { arrayWrap, isArray, isDefined, isNumber, isString } from "./utils";
 
 type NodeArray = (Node | NodeArray | string | WS | undefined)[];
@@ -62,8 +57,6 @@ const layoutWhitespace = (
   });
   return result;
 };
-
-const isStatement = (node: Node): node is Statement => /_stmt$/.test(node.type);
 
 function spacedLayout(
   nodes: Node | string | WS | NodeArray,
