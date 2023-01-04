@@ -1,4 +1,4 @@
-import { Node } from "sql-parser-cst";
+import { Node, Whitespace } from "sql-parser-cst";
 import { LayoutOptions } from "./options";
 import { isNode, isNodeArray } from "./node_utils";
 import { ArrayElement } from "./utils";
@@ -51,6 +51,16 @@ export class Context<T extends Node> {
   /** Parent context, if any */
   public parent(): Context<Node> | undefined {
     return this.parentCtx;
+  }
+
+  /** Leading whitespace */
+  public leading(): Whitespace[] {
+    return this.rawNode.leading ?? [];
+  }
+
+  /** Trailing whitespace */
+  public trailing(): Whitespace[] {
+    return this.rawNode.trailing ?? [];
   }
 
   /** Option value */

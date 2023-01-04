@@ -1,4 +1,4 @@
-import { ColumnDefinition } from "sql-parser-cst";
+import { ColumnDefinition, Whitespace } from "sql-parser-cst";
 import { Context } from "../src/Context";
 import { LayoutOptions } from "../src/options";
 
@@ -43,6 +43,24 @@ describe("Context", () => {
 
   it("parent() returns undefined for topmost node", () => {
     expect(context.parent()).toBe(undefined);
+  });
+
+  it("leading() and trailing() return empty array when no whitespace", () => {
+    expect(context.leading()).toEqual([]);
+    expect(context.trailing()).toEqual([]);
+  });
+
+  it("leading() and trailing() return whitespace array when present", () => {
+    const ws: Whitespace[] = [
+      { type: "newline", text: "\n" },
+      { type: "line_comment", text: "-- comment" },
+    ];
+    const ctx = new Context(
+      { type: "number_literal", value: 5, text: "5", leading: ws, trailing: ws },
+      options
+    );
+    expect(ctx.leading()).toBe(ws);
+    expect(ctx.trailing()).toBe(ws);
   });
 
   it("options get forwarded to child nodes", () => {
