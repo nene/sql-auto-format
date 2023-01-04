@@ -1,4 +1,4 @@
-import { FuncCall, Node } from "sql-parser-cst";
+import { Node } from "sql-parser-cst";
 import { isArray, isObject, isString } from "./utils";
 
 // Extracts element type from array type
@@ -43,13 +43,45 @@ const isNode = (x: any): x is Node =>
 
 const isNodeArray = (x: any): x is Node[] => isArray(x) && x.every(isNode);
 
-const ctx = new Context({
-  type: "func_call",
-  name: { type: "identifier", name: "sqrt", text: "sqrt" },
-  args: {
-    type: "paren_expr",
-    expr: { type: "func_args", args: { type: "list_expr", items: [] } },
-  },
-} as FuncCall);
+type ContextTransformMap<T> = {
+  [K in Node["type"]]: (
+    ctx: Context<
+      Extract<
+        Node,
+        {
+          type: K;
+        }
+      >
+    >
+  ) => T;
+};
 
-ctx.get("args")?.get("expr").get("args").get("items");
+export function contextTransformer<T>(
+  map: Partial<ContextTransformMap<T>>
+): (ctx: Context<Node>) => T {
+  return (ctx: Context<Node>) => {
+    const node = ctx.node();
+    const fn = map[node.type] as (
+      e: Context<Extract<Node, { type: typeof node["type"] }>>
+    ) => T;
+
+    if (!fn) {
+      if (!node.type) {
+        throw new Error(`No type field on node: ${JSON.stringify(node)}`);
+      }
+      throw new Error(`No transform map entry for ${node.type}`);
+    }
+
+    return fn(ctx);
+  };
+}
+
+const layout = (ctx: Context<Node> | undefined): string =>
+  ctx ? layoutNode(ctx) : "";
+
+const layoutNode = contextTransformer<string>({
+  program: (ctx) => ctx.get("statements").map(layout).join(""),
+  column_definition: (ctx) =>
+    layout(ctx.get("name")) + " " + layout(ctx.get("dataType")),
+  identifier: (ctx) => ctx.get("text"),
+});
