@@ -1,7 +1,7 @@
 import { Node, Whitespace } from "sql-parser-cst";
 import { LayoutOptions } from "./options";
-import { isNode, isNodeArray } from "./node_utils";
-import { ArrayElement } from "./utils";
+import { isNode } from "./node_utils";
+import { ArrayElement, isArray } from "./utils";
 
 type MaybeContext<T> = T extends Node
   ? Context<T>
@@ -32,7 +32,10 @@ export class Context<T extends Node> {
     const value = this.rawNode[key];
     if (isNode(value)) {
       return this.childContext(value) as MaybeContext<T[TKey]>;
-    } else if (isNodeArray(value)) {
+    } else if (isArray(value)) {
+      // All arrays besides leading/trailing are arrays of Nodes,
+      // and the types don't allow calling get() with "leading" or "trailing".
+      // So we're safe converting it to Context<Node>[].
       return value.map((v) => this.childContext(v)) as MaybeContext<T[TKey]>;
     } else {
       return value as MaybeContext<T[TKey]>;
