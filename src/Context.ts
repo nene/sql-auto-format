@@ -15,11 +15,14 @@ type MaybeContext<T> = T extends Node
 // Keys of Node objects that have special meaning
 type ReservedKey = "type" | "range" | "leading" | "trailing";
 
+// For now, just use FormatOptions, later we'll want to extract only specific keys
+type LayoutOptions = Required<FormatOptions>;
+
 /** Formatting context */
 export class Context<T extends Node> {
   constructor(
     private rawNode: T,
-    private options: Required<FormatOptions>,
+    private options: LayoutOptions,
     private parentCtx?: Context<Node>
   ) {}
 
@@ -48,9 +51,9 @@ export class Context<T extends Node> {
     return this.parentCtx;
   }
 
-  public getOption<TKey extends keyof Required<FormatOptions>>(
+  public getOption<TKey extends keyof LayoutOptions>(
     key: TKey
-  ): Required<FormatOptions>[TKey] {
+  ): LayoutOptions[TKey] {
     return this.options[key];
   }
 }
