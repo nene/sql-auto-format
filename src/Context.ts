@@ -1,10 +1,6 @@
 import { Node } from "sql-parser-cst";
 import { FormatOptions } from "./format";
-import { isArray, isObject, isString } from "./utils";
-
-// Extracts element type from array type
-// https://stackoverflow.com/a/57447842/15982
-type ArrayElement<A> = A extends readonly (infer T)[] ? T : never;
+import { ArrayElement, isArray, isObject, isString } from "./utils";
 
 type MaybeContext<T> = T extends Node
   ? Context<T>
