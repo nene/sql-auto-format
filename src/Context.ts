@@ -1,4 +1,5 @@
 import { Node } from "sql-parser-cst";
+import { FormatOptions } from "./format";
 import { isArray, isObject, isString } from "./utils";
 
 // Extracts element type from array type
@@ -16,16 +17,22 @@ type ReservedKey = "type" | "range" | "leading" | "trailing";
 
 /** Formatting context */
 export class Context<T extends Node> {
-  constructor(private rawNode: T, private parentCtx?: Context<Node>) {}
+  constructor(
+    private rawNode: T,
+    private options: Required<FormatOptions>,
+    private parentCtx?: Context<Node>
+  ) {}
 
   public get<TKey extends Exclude<keyof T, ReservedKey>>(
     key: TKey
   ): MaybeContext<T[TKey]> {
     const value = this.rawNode[key];
     if (isNode(value)) {
-      return new Context(value, this) as MaybeContext<T[TKey]>;
+      return new Context(value, this.options, this) as MaybeContext<T[TKey]>;
     } else if (isNodeArray(value)) {
-      return value.map((v) => new Context(v, this)) as MaybeContext<T[TKey]>;
+      return value.map(
+        (v) => new Context(v, this.options, this)
+      ) as MaybeContext<T[TKey]>;
     } else {
       return value as MaybeContext<T[TKey]>;
     }
@@ -37,6 +44,12 @@ export class Context<T extends Node> {
 
   public parent(): Context<Node> | undefined {
     return this.parentCtx;
+  }
+
+  public getOption<TKey extends keyof Required<FormatOptions>>(
+    key: TKey
+  ): Required<FormatOptions>[TKey] {
+    return this.options[key];
   }
 }
 
