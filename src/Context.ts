@@ -28,14 +28,16 @@ export class Context<T extends Node> {
   ): MaybeContext<T[TKey]> {
     const value = this.rawNode[key];
     if (isNode(value)) {
-      return new Context(value, this.options, this) as MaybeContext<T[TKey]>;
+      return this.childContext(value) as MaybeContext<T[TKey]>;
     } else if (isNodeArray(value)) {
-      return value.map(
-        (v) => new Context(v, this.options, this)
-      ) as MaybeContext<T[TKey]>;
+      return value.map((v) => this.childContext(v)) as MaybeContext<T[TKey]>;
     } else {
       return value as MaybeContext<T[TKey]>;
     }
+  }
+
+  private childContext<TNode extends Node>(childNode: TNode): Context<TNode> {
+    return new Context(childNode, this.options, this);
   }
 
   public node(): T {
