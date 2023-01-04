@@ -1,10 +1,11 @@
+import { Context } from "../src/Context";
 import { layout } from "../src/layout";
 import { parse } from "./test_utils";
 
 describe("format: layout()", () => {
   function testLayout(sql: string) {
     const cst = parse(sql);
-    return layout(cst);
+    return layout(new Context(cst, { dialect: "sqlite", tabWidth: 2 }));
   }
 
   it("computes layout", () => {

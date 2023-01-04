@@ -46,13 +46,3 @@ export function contextTransformer<T>(
     return fn(ctx);
   };
 }
-
-const layout = (ctx: Context<Node> | undefined): string =>
-  ctx ? layoutNode(ctx) : "";
-
-const layoutNode = contextTransformer<string>({
-  program: (ctx) => ctx.get("statements").map(layout).join(""),
-  column_definition: (ctx) =>
-    layout(ctx.get("name")) + " " + layout(ctx.get("dataType")),
-  identifier: (ctx) => ctx.get("text"),
-});

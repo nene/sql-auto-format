@@ -7,6 +7,7 @@ import { startWithEmptyLine } from "./startWithEmptyLine";
 import { unroll } from "./unroll";
 import { pipe, trim, curry } from "ramda";
 import { FormatOptions } from "./options";
+import { Context } from "./Context";
 
 /**
  * Takes SQL string and auto-formats it.
@@ -17,6 +18,7 @@ export function format(sql: string, options: FormatOptions): string {
   return pipe(
     parseToCst(cfg),
     startWithEmptyLine,
+    (node) => new Context(node, cfg),
     layout,
     unroll,
     splitLines,

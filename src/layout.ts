@@ -1,11 +1,13 @@
-import { Node, Whitespace, cstTransformer, ListExpr } from "sql-parser-cst";
+import { Node, Whitespace, ListExpr } from "sql-parser-cst";
+import { Context } from "./Context";
+import { contextTransformer } from "./contextTransformer";
 import { Layout, Line, WS } from "./LayoutTypes";
 import { isStatement } from "./node_utils";
 import { arrayWrap, isArray, isDefined, isNumber, isString } from "./utils";
 
-type NodeArray = (Node | NodeArray | string | WS | undefined)[];
+type NodeArray = (Context<Node> | NodeArray | string | WS | undefined)[];
 
-export function layout(node: Node | string | WS | NodeArray): Layout {
+export function layout(node: Context<Node> | string | WS | NodeArray): Layout {
   if (isString(node) || isNumber(node)) {
     return node;
   }
@@ -17,23 +19,23 @@ export function layout(node: Node | string | WS | NodeArray): Layout {
 }
 
 function withWhitespace<T extends Node>(
-  node: T,
-  layoutFn: (node: T) => Layout
+  ctx: Context<T>,
+  layoutFn: (ctx: Context<T>) => Layout
 ): Layout {
-  const leading = layoutWhitespace(node.leading, node);
-  const trailing = layoutWhitespace(node.trailing, node);
+  const leading = layoutWhitespace(ctx.leading(), ctx);
+  const trailing = layoutWhitespace(ctx.trailing(), ctx);
   if (leading.length || trailing.length) {
-    return [...leading, layoutFn(node), ...trailing];
+    return [...leading, layoutFn(ctx), ...trailing];
   }
-  return layoutFn(node);
+  return layoutFn(ctx);
 }
 
 const layoutWhitespace = (
-  whitespaceItems: Whitespace[] | undefined,
-  node: Node
+  whitespaceItems: Whitespace[],
+  ctx: Context<Node>
 ): Layout[] => {
   const result: Layout[] = [];
-  (whitespaceItems || []).forEach((ws, i, arr) => {
+  whitespaceItems.forEach((ws, i, arr) => {
     const prev = arr[i - 1];
     if (ws.type === "block_comment") {
       if (prev?.type === "newline") {
@@ -48,7 +50,7 @@ const layoutWhitespace = (
         result.push(WS.space, ws.text, WS.newline);
       }
     } else if (
-      isStatement(node) &&
+      isStatement(ctx.node()) &&
       ws.type === "newline" &&
       prev?.type === "newline"
     ) {
@@ -59,7 +61,7 @@ const layoutWhitespace = (
 };
 
 function spacedLayout(
-  nodes: Node | string | WS | NodeArray,
+  nodes: Context<Node> | string | WS | NodeArray,
   separators: (string | WS)[] = [WS.space]
 ): Layout {
   return joinLayoutArray(layout(arrayWrap(nodes)) as Layout[], separators);
@@ -79,89 +81,108 @@ function joinLayoutArray(
   return result;
 }
 
-function layoutMultilineListExpr(node: ListExpr): Layout[] {
+function layoutMultilineListExpr(ctx: Context<ListExpr>): Layout[] {
   return arrayWrap(
-    withWhitespace(node, (n) => n.items.map(layout).map(lineWithSeparator(",")))
+    withWhitespace(ctx, (c) =>
+      c.get("items").map(layout).map(lineWithSeparator(","))
+    )
   );
 }
 
-const layoutNode = cstTransformer<Layout>({
-  program: (node) => node.statements.map(layout).map(lineWithSeparator(";")),
+const layoutNode = contextTransformer<Layout>({
+  program: (ctx) =>
+    ctx.get("statements").map(layout).map(lineWithSeparator(";")),
   empty: () => [],
 
   // SELECT statement
-  select_stmt: (node) => node.clauses.map(layout),
+  select_stmt: (ctx) => ctx.get("clauses").map(layout),
   // SELECT
-  select_clause: (node) => [
-    line(layout(node.selectKw)),
-    indent(...layoutMultilineListExpr(node.columns)),
+  select_clause: (ctx) => [
+    line(layout(ctx.get("selectKw"))),
+    indent(...layoutMultilineListExpr(ctx.get("columns"))),
   ],
   // FROM
-  from_clause: (node) => [line(layout(node.fromKw)), indent(layout(node.expr))],
-  join_expr: (node) => [
-    line(layout(node.left)),
+  from_clause: (ctx) => [
+    line(layout(ctx.get("fromKw"))),
+    indent(layout(ctx.get("expr"))),
+  ],
+  join_expr: (ctx) => [
+    line(layout(ctx.get("left"))),
     line(
-      spacedLayout(node.operator),
+      spacedLayout(ctx.get("operator")),
       WS.space,
-      spacedLayout([node.right, node.specification])
+      spacedLayout([ctx.get("right"), ctx.get("specification")])
     ),
   ],
-  join_on_specification: (node) => spacedLayout([node.onKw, node.expr]),
+  join_on_specification: (ctx) =>
+    spacedLayout([ctx.get("onKw"), ctx.get("expr")]),
   // WHERE
-  where_clause: (node) => [
-    line(layout(node.whereKw)),
-    indent(layout(node.expr)),
+  where_clause: (ctx) => [
+    line(layout(ctx.get("whereKw"))),
+    indent(layout(ctx.get("expr"))),
   ],
   // ORDER BY
-  order_by_clause: (node) => [
-    line(spacedLayout(node.orderByKw)),
-    indent(...layoutMultilineListExpr(node.specifications)),
+  order_by_clause: (ctx) => [
+    line(spacedLayout(ctx.get("orderByKw"))),
+    indent(...layoutMultilineListExpr(ctx.get("specifications"))),
   ],
-  sort_specification: (node) => spacedLayout([node.expr, node.orderKw]),
+  sort_specification: (ctx) =>
+    spacedLayout([ctx.get("expr"), ctx.get("orderKw")]),
   // LIMIT
-  limit_clause: (node) => [
-    line(layout(node.limitKw)),
-    indent(layout(node.count)),
+  limit_clause: (ctx) => [
+    line(layout(ctx.get("limitKw"))),
+    indent(layout(ctx.get("count"))),
   ],
 
-  create_table_stmt: (node) => {
-    if (!node.columns) {
+  create_table_stmt: (ctx) => {
+    const columns = ctx.get("columns");
+    if (!columns) {
       throw new Error("Unimplemented: CREATE TABLE without columns");
     }
     return [
-      line(spacedLayout([node.createKw, node.tableKw, node.name, "("])),
-      indent(...layoutMultilineListExpr(node.columns.expr)),
+      line(
+        spacedLayout([
+          ctx.get("createKw"),
+          ctx.get("tableKw"),
+          ctx.get("name"),
+          "(",
+        ])
+      ),
+      indent(...layoutMultilineListExpr(columns.get("expr"))),
       line(")"),
     ];
   },
-  column_definition: (node) => spacedLayout([node.name, node.dataType]),
-  data_type: (node) => layout([node.nameKw, node.params]),
+  column_definition: (ctx) =>
+    spacedLayout([ctx.get("name"), ctx.get("dataType")]),
+  data_type: (ctx) => layout([ctx.get("nameKw"), ctx.get("params")]),
 
   // Expressions
-  binary_expr: (node) => spacedLayout([node.left, node.operator, node.right]),
-  paren_expr: (node) =>
-    isStatement(node.expr)
-      ? ["(", indent(layout(node.expr)), line(")")]
-      : layout(["(", node.expr, ")"]),
-  list_expr: (node) => spacedLayout(node.items, [",", WS.space]),
-  func_call: (node) => layout([node.name, node.args]),
-  func_args: (node) => layout(node.args),
+  binary_expr: (ctx) =>
+    spacedLayout([ctx.get("left"), ctx.get("operator"), ctx.get("right")]),
+  paren_expr: (ctx) =>
+    isStatement(ctx.get("expr").node())
+      ? ["(", indent(layout(ctx.get("expr"))), line(")")]
+      : layout(["(", ctx.get("expr"), ")"]),
+  list_expr: (ctx) => spacedLayout(ctx.get("items"), [",", WS.space]),
+  func_call: (ctx) => layout([ctx.get("name"), ctx.get("args")]),
+  func_args: (ctx) => layout(ctx.get("args")),
 
   // Tables & columns
-  member_expr: (node) =>
-    node.property.type === "array_subscript"
-      ? layout([node.object, node.property])
-      : layout([node.object, ".", node.property]),
-  alias: (node) => spacedLayout([node.expr, node.asKw, node.alias]),
+  member_expr: (ctx) =>
+    ctx.get("property").is("array_subscript")
+      ? layout([ctx.get("object"), ctx.get("property")])
+      : layout([ctx.get("object"), ".", ctx.get("property")]),
+  alias: (ctx) =>
+    spacedLayout([ctx.get("expr"), ctx.get("asKw"), ctx.get("alias")]),
   all_columns: () => "*",
 
   // Basic language elements
-  keyword: (node) => node.text,
-  identifier: (node) => node.text,
-  string_literal: (node) => node.text,
-  number_literal: (node) => node.text,
-  boolean_literal: (node) => node.text,
-  null_literal: (node) => node.text,
+  keyword: (ctx) => ctx.get("text"),
+  identifier: (ctx) => ctx.get("text"),
+  string_literal: (ctx) => ctx.get("text"),
+  number_literal: (ctx) => ctx.get("text"),
+  boolean_literal: (ctx) => ctx.get("text"),
+  null_literal: (ctx) => ctx.get("text"),
 });
 
 const lineWithSeparator =
