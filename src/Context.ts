@@ -1,5 +1,5 @@
 import { Node } from "sql-parser-cst";
-import { FormatOptions } from "./format";
+import { LayoutOptions } from "./options";
 import { isNode, isNodeArray } from "./node_utils";
 import { ArrayElement } from "./utils";
 
@@ -11,9 +11,6 @@ type MaybeContext<T> = T extends Node
 
 // Keys of Node objects that have special meaning
 type ReservedKey = "type" | "range" | "leading" | "trailing";
-
-// For now, just use FormatOptions, later we'll want to extract only specific keys
-type LayoutOptions = Required<FormatOptions>;
 
 /** Formatting context */
 export class Context<T extends Node> {

@@ -1,9 +1,6 @@
 import { curry } from "ramda";
 import { LayoutLiteral, UnrolledLine, WS } from "./LayoutTypes";
-
-interface SerializeOptions {
-  tabWidth: number;
-}
+import { SerializeOptions } from "./options";
 
 export const serialize = curry(
   (options: SerializeOptions, lines: UnrolledLine[]): string => {

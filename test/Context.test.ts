@@ -1,9 +1,9 @@
 import { ColumnDefinition } from "sql-parser-cst";
 import { Context } from "../src/Context";
-import { FormatOptions } from "../src/format";
+import { LayoutOptions } from "../src/options";
 
 describe("Context", () => {
-  const options: Required<FormatOptions> = { dialect: "sqlite", tabWidth: 2 };
+  const options: LayoutOptions = { dialect: "sqlite", tabWidth: 2 };
   const node: ColumnDefinition = {
     type: "column_definition",
     name: { type: "identifier", text: "`foo`", name: "foo" },

@@ -1,5 +1,6 @@
 import { parse as parseCst } from "sql-parser-cst";
-import { format as originalFormat, FormatOptions } from "../src/format";
+import { format as originalFormat } from "../src/format";
+import { FormatOptions } from "../src/options";
 
 export function parse(sql: string) {
   return parseCst(sql, {

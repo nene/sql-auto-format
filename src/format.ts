@@ -1,4 +1,4 @@
-import { parse, ParserOptions } from "sql-parser-cst";
+import { parse } from "sql-parser-cst";
 import { collapseSpaces } from "./collapseSpaces";
 import { layout } from "./layout";
 import { serialize } from "./serialize";
@@ -6,11 +6,7 @@ import { splitLines } from "./splitLines";
 import { startWithEmptyLine } from "./startWithEmptyLine";
 import { unroll } from "./unroll";
 import { pipe, trim, curry } from "ramda";
-
-export interface FormatOptions {
-  dialect: ParserOptions["dialect"];
-  tabWidth?: number;
-}
+import { FormatOptions } from "./options";
 
 /**
  * Takes SQL string and auto-formats it.
