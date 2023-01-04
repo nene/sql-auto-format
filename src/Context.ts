@@ -48,6 +48,13 @@ export class Context<T extends Node> {
     return this.rawNode;
   }
 
+  /** Type guard to check of the type of Node in this Context */
+  public is<TType extends Node["type"]>(
+    type: TType
+  ): this is Context<Extract<Node, { type: TType }>> {
+    return this.rawNode.type === type;
+  }
+
   /** Parent context, if any */
   public parent(): Context<Node> | undefined {
     return this.parentCtx;

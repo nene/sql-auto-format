@@ -41,6 +41,15 @@ describe("Context", () => {
     expect(context.node()).toBe(node);
   });
 
+  it("is() allows casting Context<T> to different node type", () => {
+    if (context.is("select_clause")) {
+      // just testing type-inference here, not expecting to reach this code.
+      expect(context.get("selectKw")).toBeTruthy();
+    } else {
+      expect(context.is("column_definition")).toBe(true);
+    }
+  });
+
   it("parent() returns undefined for topmost node", () => {
     expect(context.parent()).toBe(undefined);
   });
