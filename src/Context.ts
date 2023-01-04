@@ -1,6 +1,7 @@
 import { Node } from "sql-parser-cst";
 import { FormatOptions } from "./format";
-import { ArrayElement, isArray, isObject, isString } from "./utils";
+import { isNode, isNodeArray } from "./node_utils";
+import { ArrayElement } from "./utils";
 
 type MaybeContext<T> = T extends Node
   ? Context<T>
@@ -62,11 +63,3 @@ export class Context<T extends Node> {
     return this.options[key];
   }
 }
-
-const isNode = (x: any): x is Node =>
-  isObject(x) &&
-  isString(x.type) &&
-  x.type !== "leading" &&
-  x.type !== "trailing";
-
-const isNodeArray = (x: any): x is Node[] => isArray(x) && x.every(isNode);
