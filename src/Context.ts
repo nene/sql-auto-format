@@ -26,6 +26,12 @@ export class Context<T extends Node> {
     private parentCtx?: Context<Node>
   ) {}
 
+  /**
+   * Returns CST Node property value:
+   * - when it's a Node, returns Context<Node>
+   * - when it's an array of Nodes, returns Context<Node>[]
+   * - otherwise returns it as is
+   */
   public get<TKey extends Exclude<keyof T, ReservedKey>>(
     key: TKey
   ): MaybeContext<T[TKey]> {
@@ -43,14 +49,17 @@ export class Context<T extends Node> {
     return new Context(childNode, this.options, this);
   }
 
+  /** The actual raw Node object */
   public node(): T {
     return this.rawNode;
   }
 
+  /** Parent context, if any */
   public parent(): Context<Node> | undefined {
     return this.parentCtx;
   }
 
+  /** Option value */
   public getOption<TKey extends keyof LayoutOptions>(
     key: TKey
   ): LayoutOptions[TKey] {
