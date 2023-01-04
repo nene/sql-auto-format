@@ -31,6 +31,7 @@ export function format(sql: string, options: FormatOptions): string {
 function assignDefaults(options: FormatOptions): Required<FormatOptions> {
   return {
     tabWidth: 2,
+    keywordCase: "preserve",
     ...options,
   };
 }

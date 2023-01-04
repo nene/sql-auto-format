@@ -3,7 +3,7 @@ import { Context } from "../src/Context";
 import { LayoutOptions } from "../src/options";
 
 describe("Context", () => {
-  const options: LayoutOptions = { dialect: "sqlite", tabWidth: 2 };
+  const options: LayoutOptions = { keywordCase: "preserve" };
   const node: ColumnDefinition = {
     type: "column_definition",
     name: { type: "identifier", text: "`foo`", name: "foo" },
@@ -73,8 +73,8 @@ describe("Context", () => {
   });
 
   it("options get forwarded to child nodes", () => {
-    expect(context.getOption("dialect")).toBe("sqlite");
-    expect(context.get("name").getOption("dialect")).toBe("sqlite");
-    expect(context.get("constraints")[0].getOption("dialect")).toBe("sqlite");
+    expect(context.getOption("keywordCase")).toBe("preserve");
+    expect(context.get("name").getOption("keywordCase")).toBe("preserve");
+    expect(context.get("constraints")[0].getOption("keywordCase")).toBe("preserve");
   });
 });

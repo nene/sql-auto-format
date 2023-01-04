@@ -5,7 +5,7 @@ import { parse } from "./test_utils";
 describe("format: layout()", () => {
   function testLayout(sql: string) {
     const cst = parse(sql);
-    return layout(new Context(cst, { dialect: "sqlite", tabWidth: 2 }));
+    return layout(new Context(cst, { keywordCase: "preserve" }));
   }
 
   it("computes layout", () => {
