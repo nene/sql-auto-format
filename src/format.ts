@@ -1,13 +1,13 @@
 import { parse } from "sql-parser-cst";
 import { collapseSpaces } from "./collapseSpaces";
-import { layout } from "./layout";
+import { layout } from "./layout/layout";
 import { serialize } from "./serialize";
 import { splitLines } from "./splitLines";
 import { startWithEmptyLine } from "./startWithEmptyLine";
 import { unroll } from "./unroll";
 import { pipe, trim, curry } from "ramda";
 import { FormatOptions } from "./options";
-import { Context } from "./Context";
+import { Context } from "./layout/Context";
 
 /**
  * Takes SQL string and auto-formats it.

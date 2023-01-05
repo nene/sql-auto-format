@@ -2,8 +2,8 @@ import { Node, Whitespace, ListExpr } from "sql-parser-cst";
 import { Context } from "./Context";
 import { contextTransformer } from "./contextTransformer";
 import { Layout, Line, WS } from "./LayoutTypes";
-import { isStatement } from "./node_utils";
-import { arrayWrap, isArray, isDefined, isNumber, isString } from "./utils";
+import { isStatement } from "../node_utils";
+import { arrayWrap, isArray, isDefined, isNumber, isString } from "../utils";
 
 type NodeArray = (Context<Node> | NodeArray | string | WS | undefined)[];
 

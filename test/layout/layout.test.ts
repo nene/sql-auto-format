@@ -1,6 +1,6 @@
-import { Context } from "../src/Context";
-import { layout } from "../src/layout";
-import { parse } from "./test_utils";
+import { Context } from "../../src/layout/Context";
+import { layout } from "../../src/layout/layout";
+import { parse } from "../test_utils";
 
 describe("format: layout()", () => {
   function testLayout(sql: string) {

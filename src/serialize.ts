@@ -1,5 +1,5 @@
 import { curry } from "ramda";
-import { LayoutLiteral, UnrolledLine, WS } from "./LayoutTypes";
+import { LayoutLiteral, UnrolledLine, WS } from "./layout/LayoutTypes";
 import { SerializeOptions } from "./options";
 
 export const serialize = curry(

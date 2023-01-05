@@ -1,4 +1,4 @@
-import { isNumber, isObject, isString } from "./utils";
+import { isNumber, isObject, isString } from "../utils";
 
 // Whitespace items
 export enum WS {

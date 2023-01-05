@@ -8,7 +8,7 @@ import {
   UnrolledLine,
   isUnrolledLine,
   isLayoutLiteral,
-} from "./LayoutTypes";
+} from "./layout/LayoutTypes";
 
 export function unroll(layout: Layout): UnrolledLine[] {
   return lonelyLiteralsToLines(arrayWrap(unrollLayout(layout)));

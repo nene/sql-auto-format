@@ -1,6 +1,6 @@
 import { ColumnDefinition, Whitespace } from "sql-parser-cst";
-import { Context } from "../src/Context";
-import { LayoutOptions } from "../src/options";
+import { Context } from "../../src/layout/Context";
+import { LayoutOptions } from "../../src/options";
 
 describe("Context", () => {
   const options: LayoutOptions = { keywordCase: "preserve" };

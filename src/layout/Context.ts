@@ -1,7 +1,7 @@
 import { Node, Whitespace } from "sql-parser-cst";
-import { LayoutOptions } from "./options";
-import { isNode } from "./node_utils";
-import { ArrayElement, isArray } from "./utils";
+import { LayoutOptions } from "../options";
+import { isNode } from "../node_utils";
+import { ArrayElement, isArray } from "../utils";
 
 type MaybeContext<T> = T extends Node
   ? Context<T>

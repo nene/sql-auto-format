@@ -1,5 +1,5 @@
 import { dropWhile, dropLastWhile, last } from "ramda";
-import { isSpace, LayoutLiteral, UnrolledLine, WS } from "./LayoutTypes";
+import { isSpace, LayoutLiteral, UnrolledLine, WS } from "./layout/LayoutTypes";
 
 export function collapseSpaces(lines: UnrolledLine[]): UnrolledLine[] {
   return lines.map((line) => ({

@@ -1,4 +1,4 @@
-import { UnrolledLine, WS } from "../src/LayoutTypes";
+import { UnrolledLine, WS } from "../src/layout/LayoutTypes";
 import { splitLines } from "../src/splitLines";
 
 describe("splitLines()", () => {
