@@ -1,9 +1,10 @@
-import { Node, Whitespace, ListExpr } from "sql-parser-cst";
+import { Node, ListExpr } from "sql-parser-cst";
 import { Context } from "./Context";
 import { contextTransformer } from "./contextTransformer";
 import { indent, Layout, line, WS } from "./LayoutTypes";
 import { isStatement } from "../node_utils";
 import { arrayWrap, isArray, isDefined, isNumber, isString } from "../utils";
+import { withWhitespace } from "./whitespace";
 
 type NodeArray = (Context<Node> | NodeArray | string | WS | undefined)[];
 
@@ -17,48 +18,6 @@ export function layout(node: Context<Node> | string | WS | NodeArray): Layout {
 
   return withWhitespace(node, layoutNode);
 }
-
-function withWhitespace<T extends Node>(
-  ctx: Context<T>,
-  layoutFn: (ctx: Context<T>) => Layout
-): Layout {
-  const leading = layoutWhitespace(ctx.leading(), ctx);
-  const trailing = layoutWhitespace(ctx.trailing(), ctx);
-  if (leading.length || trailing.length) {
-    return [...leading, layoutFn(ctx), ...trailing];
-  }
-  return layoutFn(ctx);
-}
-
-const layoutWhitespace = (
-  whitespaceItems: Whitespace[],
-  ctx: Context<Node>
-): Layout[] => {
-  const result: Layout[] = [];
-  whitespaceItems.forEach((ws, i, arr) => {
-    const prev = arr[i - 1];
-    if (ws.type === "block_comment") {
-      if (prev?.type === "newline") {
-        result.push(line(ws.text));
-      } else {
-        result.push(WS.space, ws.text, WS.space);
-      }
-    } else if (ws.type === "line_comment") {
-      if (prev?.type === "newline") {
-        result.push(line(ws.text, WS.newline));
-      } else {
-        result.push(WS.space, ws.text, WS.newline);
-      }
-    } else if (
-      isStatement(ctx.node()) &&
-      ws.type === "newline" &&
-      prev?.type === "newline"
-    ) {
-      result.push(line());
-    }
-  });
-  return result;
-};
 
 function spacedLayout(
   nodes: Context<Node> | string | WS | NodeArray,
