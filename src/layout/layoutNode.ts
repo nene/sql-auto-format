@@ -27,11 +27,10 @@ export const layoutNode = contextTransformer<Layout>({
     line(
       spacedLayout(ctx.get("operator")),
       WS.space,
-      spacedLayout([ctx.get("right"), ctx.get("specification")])
+      spacedLayout(ctx.get(["right", "specification"]))
     ),
   ],
-  join_on_specification: (ctx) =>
-    spacedLayout([ctx.get("onKw"), ctx.get("expr")]),
+  join_on_specification: (ctx) => spacedLayout(ctx.get(["onKw", "expr"])),
   // WHERE
   where_clause: (ctx) => [
     line(layout(ctx.get("whereKw"))),
@@ -56,25 +55,16 @@ export const layoutNode = contextTransformer<Layout>({
       throw new Error("Unimplemented: CREATE TABLE without columns");
     }
     return [
-      line(
-        spacedLayout([
-          ctx.get("createKw"),
-          ctx.get("tableKw"),
-          ctx.get("name"),
-          "(",
-        ])
-      ),
+      line(spacedLayout([...ctx.get(["createKw", "tableKw", "name"]), "("])),
       indent(...layoutMultilineListExpr(columns.get("expr"))),
       line(")"),
     ];
   },
-  column_definition: (ctx) =>
-    spacedLayout([ctx.get("name"), ctx.get("dataType")]),
-  data_type: (ctx) => layout([ctx.get("nameKw"), ctx.get("params")]),
+  column_definition: (ctx) => spacedLayout(ctx.get(["name", "dataType"])),
+  data_type: (ctx) => layout(ctx.get(["nameKw", "params"])),
 
   // Expressions
-  binary_expr: (ctx) =>
-    spacedLayout([ctx.get("left"), ctx.get("operator"), ctx.get("right")]),
+  binary_expr: (ctx) => spacedLayout(ctx.get(["left", "operator", "right"])),
   paren_expr: (ctx) =>
     isStatement(ctx.get("expr").node())
       ? ["(", indent(layout(ctx.get("expr"))), line(")")]
@@ -82,7 +72,7 @@ export const layoutNode = contextTransformer<Layout>({
   between_expr: (ctx) =>
     spacedLayout(ctx.get(["left", "betweenKw", "begin", "andKw", "end"])),
   list_expr: (ctx) => spacedLayout(ctx.get("items"), [",", WS.space]),
-  func_call: (ctx) => layout([ctx.get("name"), ctx.get("args")]),
+  func_call: (ctx) => layout(ctx.get(["name", "args"])),
   func_args: (ctx) => layout(ctx.get("args")),
 
   // Tables & columns
@@ -90,8 +80,7 @@ export const layoutNode = contextTransformer<Layout>({
     ctx.get("property").is("array_subscript")
       ? layout([ctx.get("object"), ctx.get("property")])
       : layout([ctx.get("object"), ".", ctx.get("property")]),
-  alias: (ctx) =>
-    spacedLayout([ctx.get("expr"), ctx.get("asKw"), ctx.get("alias")]),
+  alias: (ctx) => spacedLayout(ctx.get(["expr", "asKw", "alias"])),
   all_columns: () => "*",
 
   // Basic language elements
