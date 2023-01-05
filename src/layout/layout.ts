@@ -1,7 +1,7 @@
 import { Node, Whitespace, ListExpr } from "sql-parser-cst";
 import { Context } from "./Context";
 import { contextTransformer } from "./contextTransformer";
-import { Layout, Line, WS } from "./LayoutTypes";
+import { indent, Layout, line, WS } from "./LayoutTypes";
 import { isStatement } from "../node_utils";
 import { arrayWrap, isArray, isDefined, isNumber, isString } from "../utils";
 
@@ -197,13 +197,3 @@ const layoutNode = contextTransformer<Layout>({
 const lineWithSeparator =
   (separator: string) => (item: Layout, i: number, allItems: Layout[]) =>
     i < allItems.length - 1 ? line(item, separator) : line(item);
-
-// utils for easy creation of lines
-
-const line = (...items: Layout[]): Line => ({ layout: "line", items });
-
-const indent = (...items: Layout[]): Line => ({
-  layout: "line",
-  indent: 1,
-  items,
-});

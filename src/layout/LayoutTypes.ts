@@ -39,3 +39,13 @@ export const isNewline = (item: LayoutLiteral): item is WS.newline =>
 
 export const isSpace = (item: LayoutLiteral): item is WS.space =>
   item === WS.space;
+
+// Utils for creation of Line objects
+
+export const line = (...items: Layout[]): Line => ({ layout: "line", items });
+
+export const indent = (...items: Layout[]): Line => ({
+  layout: "line",
+  indent: 1,
+  items,
+});
