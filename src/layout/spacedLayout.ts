@@ -1,14 +1,16 @@
 import { Node } from "sql-parser-cst";
 import { Context } from "./Context";
 import { Layout, WS } from "./LayoutTypes";
-import { arrayWrap } from "../utils";
+import { isArray } from "../utils";
 import { layout, NodeArray } from "./layout";
 
 export function spacedLayout(
   nodes: Context<Node> | string | WS | NodeArray,
   separators: (string | WS)[] = [WS.space]
 ): Layout {
-  return joinLayoutArray(layout(arrayWrap(nodes)), separators);
+  return isArray(nodes)
+    ? joinLayoutArray(layout(nodes), separators)
+    : layout(nodes);
 }
 
 function joinLayoutArray(
