@@ -5,8 +5,9 @@ import { indent, Layout, line, WS } from "./LayoutTypes";
 import { isStatement } from "../node_utils";
 import { arrayWrap, isArray, isDefined, isNumber, isString } from "../utils";
 import { withWhitespace } from "./whitespace";
+import { spacedLayout } from "./spacedLayout";
 
-type NodeArray = (Context<Node> | NodeArray | string | WS | undefined)[];
+export type NodeArray = (Context<Node> | NodeArray | string | WS | undefined)[];
 
 export function layout(node: NodeArray): Layout[];
 export function layout(node: Context<Node> | string | WS | NodeArray): Layout;
@@ -19,27 +20,6 @@ export function layout(node: Context<Node> | string | WS | NodeArray): Layout {
   }
 
   return withWhitespace(node, layoutNode);
-}
-
-function spacedLayout(
-  nodes: Context<Node> | string | WS | NodeArray,
-  separators: (string | WS)[] = [WS.space]
-): Layout {
-  return joinLayoutArray(layout(arrayWrap(nodes)), separators);
-}
-
-function joinLayoutArray(
-  array: Layout[],
-  separators: (string | WS)[]
-): Layout[] {
-  const result: Layout[] = [];
-  for (const it of array) {
-    if (result.length > 0) {
-      result.push(...separators);
-    }
-    result.push(it);
-  }
-  return result;
 }
 
 function layoutMultilineListExpr(ctx: Context<ListExpr>): Layout[] {
