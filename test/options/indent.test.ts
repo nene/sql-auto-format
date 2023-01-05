@@ -1,4 +1,4 @@
-import { format } from "./test_utils";
+import { format } from "../test_utils";
 import dedent from "dedent-js";
 
 describe("indent", () => {
