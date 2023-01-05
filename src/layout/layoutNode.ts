@@ -79,6 +79,14 @@ export const layoutNode = contextTransformer<Layout>({
     isStatement(ctx.get("expr").node())
       ? ["(", indent(layout(ctx.get("expr"))), line(")")]
       : layout(["(", ctx.get("expr"), ")"]),
+  between_expr: (ctx) =>
+    spacedLayout([
+      ctx.get("left"),
+      ctx.get("betweenKw"),
+      ctx.get("begin"),
+      ctx.get("andKw"),
+      ctx.get("end"),
+    ]),
   list_expr: (ctx) => spacedLayout(ctx.get("items"), [",", WS.space]),
   func_call: (ctx) => layout([ctx.get("name"), ctx.get("args")]),
   func_args: (ctx) => layout(ctx.get("args")),

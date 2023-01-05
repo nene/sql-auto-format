@@ -16,6 +16,13 @@ describe("expr", () => {
     `);
   });
 
+  it("formats BETWEEN expression", () => {
+    expect(format(`SELECT age BETWEEN 16 AND 99`)).toBe(dedent`
+      SELECT
+        age BETWEEN 16 AND 99
+    `);
+  });
+
   it("formats simple function call", () => {
     expect(format(`SELECT pow(10,8)`)).toBe(dedent`
       SELECT
