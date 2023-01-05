@@ -39,7 +39,7 @@ describe("Context", () => {
 
   it("get() can be called with array", () => {
     const [name, dataType, constraints] = context.get(["name", "dataType", "constraints"]);
-    expect(name).toBeInstanceOf(Context);
+    expect(name.get("name")).toBe("foo");
     expect(dataType).toBe(undefined);
     expect(constraints).toBeInstanceOf(Array);
   });

@@ -29,6 +29,54 @@ export class Context<T extends Node> {
   public get<TKey extends Exclude<keyof T, ReservedKey>>(
     key: TKey
   ): MaybeContext<T[TKey]>;
+  // 1 element array
+  public get<TKey1 extends Exclude<keyof T, ReservedKey>>(
+    keys: [TKey1]
+  ): [MaybeContext<T[TKey1]>];
+  // 2 element array
+  public get<
+    TKey1 extends Exclude<keyof T, ReservedKey>,
+    TKey2 extends Exclude<keyof T, ReservedKey>
+  >(keys: [TKey1, TKey2]): [MaybeContext<T[TKey1]>, MaybeContext<T[TKey2]>];
+  // 3 element array
+  public get<
+    TKey1 extends Exclude<keyof T, ReservedKey>,
+    TKey2 extends Exclude<keyof T, ReservedKey>,
+    TKey3 extends Exclude<keyof T, ReservedKey>
+  >(
+    keys: [TKey1, TKey2, TKey3]
+  ): [MaybeContext<T[TKey1]>, MaybeContext<T[TKey2]>, MaybeContext<T[TKey3]>];
+  // 4 element array
+  public get<
+    TKey1 extends Exclude<keyof T, ReservedKey>,
+    TKey2 extends Exclude<keyof T, ReservedKey>,
+    TKey3 extends Exclude<keyof T, ReservedKey>,
+    TKey4 extends Exclude<keyof T, ReservedKey>
+  >(
+    keys: [TKey1, TKey2, TKey3, TKey4]
+  ): [
+    MaybeContext<T[TKey1]>,
+    MaybeContext<T[TKey2]>,
+    MaybeContext<T[TKey3]>,
+    MaybeContext<T[TKey4]>
+  ];
+  // 5 element array
+  public get<
+    TKey1 extends Exclude<keyof T, ReservedKey>,
+    TKey2 extends Exclude<keyof T, ReservedKey>,
+    TKey3 extends Exclude<keyof T, ReservedKey>,
+    TKey4 extends Exclude<keyof T, ReservedKey>,
+    TKey5 extends Exclude<keyof T, ReservedKey>
+  >(
+    keys: [TKey1, TKey2, TKey3, TKey4, TKey5]
+  ): [
+    MaybeContext<T[TKey1]>,
+    MaybeContext<T[TKey2]>,
+    MaybeContext<T[TKey3]>,
+    MaybeContext<T[TKey4]>,
+    MaybeContext<T[TKey5]>
+  ];
+  // N element array
   public get<TKey extends Exclude<keyof T, ReservedKey>>(
     keys: TKey[]
   ): MaybeContext<T[TKey]>[];
