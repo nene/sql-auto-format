@@ -8,16 +8,11 @@ export function spacedLayout(
   nodes: Context<Node> | string | WS | NodeArray,
   separators: (string | WS)[] = [WS.space]
 ): Layout {
-  return isArray(nodes)
-    ? joinLayoutArray(layout(nodes), separators)
-    : layout(nodes);
+  return isArray(nodes) ? joinArray(layout(nodes), separators) : layout(nodes);
 }
 
-function joinLayoutArray(
-  array: Layout[],
-  separators: (string | WS)[]
-): Layout[] {
-  const result: Layout[] = [];
+function joinArray<T>(array: T[], separators: T[]): T[] {
+  const result: T[] = [];
   for (const it of array) {
     if (result.length > 0) {
       result.push(...separators);
