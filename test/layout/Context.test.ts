@@ -37,6 +37,13 @@ describe("Context", () => {
     expect(context.get("dataType")).toBe(undefined);
   });
 
+  it("get() can be called with array", () => {
+    const [name, dataType, constraints] = context.get(["name", "dataType", "constraints"]);
+    expect(name).toBeInstanceOf(Context);
+    expect(dataType).toBe(undefined);
+    expect(constraints).toBeInstanceOf(Array);
+  });
+
   it("node() returns the wrapped Node object", () => {
     expect(context.node()).toBe(node);
   });

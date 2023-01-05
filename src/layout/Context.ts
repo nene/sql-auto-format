@@ -28,17 +28,27 @@ export class Context<T extends Node> {
    */
   public get<TKey extends Exclude<keyof T, ReservedKey>>(
     key: TKey
-  ): MaybeContext<T[TKey]> {
-    const value = this.rawNode[key];
-    if (isNode(value)) {
-      return this.childContext(value) as MaybeContext<T[TKey]>;
-    } else if (isArray(value)) {
-      // All arrays besides leading/trailing are arrays of Nodes,
-      // and the types don't allow calling get() with "leading" or "trailing".
-      // So we're safe converting it to Context<Node>[].
-      return value.map((v) => this.childContext(v)) as MaybeContext<T[TKey]>;
+  ): MaybeContext<T[TKey]>;
+  public get<TKey extends Exclude<keyof T, ReservedKey>>(
+    keys: TKey[]
+  ): MaybeContext<T[TKey]>[];
+  public get<TKey extends Exclude<keyof T, ReservedKey>>(
+    key: TKey | TKey[]
+  ): MaybeContext<T[TKey]> | MaybeContext<T[TKey]>[] {
+    if (isArray(key)) {
+      return key.map((k) => this.get(k));
     } else {
-      return value as MaybeContext<T[TKey]>;
+      const value = this.rawNode[key];
+      if (isNode(value)) {
+        return this.childContext(value) as MaybeContext<T[TKey]>;
+      } else if (isArray(value)) {
+        // All arrays besides leading/trailing are arrays of Nodes,
+        // and the types don't allow calling get() with "leading" or "trailing".
+        // So we're safe converting it to Context<Node>[].
+        return value.map((v) => this.childContext(v)) as MaybeContext<T[TKey]>;
+      } else {
+        return value as MaybeContext<T[TKey]>;
+      }
     }
   }
 
