@@ -8,6 +8,8 @@ import { withWhitespace } from "./whitespace";
 
 type NodeArray = (Context<Node> | NodeArray | string | WS | undefined)[];
 
+export function layout(node: NodeArray): Layout[];
+export function layout(node: Context<Node> | string | WS | NodeArray): Layout;
 export function layout(node: Context<Node> | string | WS | NodeArray): Layout {
   if (isString(node) || isNumber(node)) {
     return node;
@@ -23,7 +25,7 @@ function spacedLayout(
   nodes: Context<Node> | string | WS | NodeArray,
   separators: (string | WS)[] = [WS.space]
 ): Layout {
-  return joinLayoutArray(layout(arrayWrap(nodes)) as Layout[], separators);
+  return joinLayoutArray(layout(arrayWrap(nodes)), separators);
 }
 
 function joinLayoutArray(
