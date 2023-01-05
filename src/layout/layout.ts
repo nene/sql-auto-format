@@ -1,11 +1,12 @@
-import { Node, ListExpr } from "sql-parser-cst";
+import { Node } from "sql-parser-cst";
 import { Context } from "./Context";
 import { contextTransformer } from "./contextTransformer";
 import { indent, Layout, line, WS } from "./LayoutTypes";
 import { isStatement } from "../node_utils";
-import { arrayWrap, isArray, isDefined, isNumber, isString } from "../utils";
+import { isArray, isDefined, isNumber, isString } from "../utils";
 import { withWhitespace } from "./whitespace";
 import { spacedLayout } from "./spacedLayout";
+import { layoutMultilineListExpr, lineWithSeparator } from "./multilineLayout";
 
 export type NodeArray = (Context<Node> | NodeArray | string | WS | undefined)[];
 
@@ -20,14 +21,6 @@ export function layout(node: Context<Node> | string | WS | NodeArray): Layout {
   }
 
   return withWhitespace(node, layoutNode);
-}
-
-function layoutMultilineListExpr(ctx: Context<ListExpr>): Layout[] {
-  return arrayWrap(
-    withWhitespace(ctx, (c) =>
-      c.get("items").map(layout).map(lineWithSeparator(","))
-    )
-  );
 }
 
 const layoutNode = contextTransformer<Layout>({
@@ -134,7 +127,3 @@ const layoutNode = contextTransformer<Layout>({
   boolean_literal: (ctx) => ctx.get("text"),
   null_literal: (ctx) => ctx.get("text"),
 });
-
-const lineWithSeparator =
-  (separator: string) => (item: Layout, i: number, allItems: Layout[]) =>
-    i < allItems.length - 1 ? line(item, separator) : line(item);
