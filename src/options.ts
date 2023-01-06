@@ -1,10 +1,9 @@
 import { ParserOptions } from "sql-parser-cst";
 
-export interface FormatOptions {
+export interface FormatOptions
+  extends Partial<SerializeOptions>,
+    Partial<LayoutOptions> {
   dialect: ParserOptions["dialect"];
-  tabWidth?: number;
-  keywordCase?: "upper" | "lower" | "preserve";
-  printWidth?: number;
 }
 
 export interface SerializeOptions {
