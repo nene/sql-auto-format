@@ -6,7 +6,7 @@ import { splitLines } from "./splitLines";
 import { startWithEmptyLine } from "./startWithEmptyLine";
 import { unroll } from "./unroll";
 import { pipe, trim, curry } from "ramda";
-import { FormatOptions } from "./options";
+import { FormatOptions, ReqFormatOptions, defaultOptions } from "./options";
 import { Context } from "./layout/Context";
 
 /**
@@ -28,11 +28,9 @@ export function format(sql: string, options: FormatOptions): string {
   )(sql);
 }
 
-function assignDefaults(options: FormatOptions): Required<FormatOptions> {
+function assignDefaults(options: FormatOptions): ReqFormatOptions {
   return {
-    tabWidth: 2,
-    keywordCase: "preserve",
-    printWidth: 80,
+    ...defaultOptions,
     ...options,
   };
 }

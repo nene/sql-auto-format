@@ -1,5 +1,5 @@
 import { Node, Whitespace } from "sql-parser-cst";
-import { LayoutOptions } from "../options";
+import { ReqFormatOptions } from "../options";
 import { isNode } from "../node_utils";
 import { ArrayElement, isArray } from "../utils";
 
@@ -16,7 +16,7 @@ type ReservedKey = "type" | "range" | "leading" | "trailing";
 export class Context<T extends Node> {
   constructor(
     private rawNode: T,
-    private options: LayoutOptions,
+    private options: ReqFormatOptions,
     private parentCtx?: Context<Node>
   ) {}
 
@@ -132,9 +132,9 @@ export class Context<T extends Node> {
   }
 
   /** Option value */
-  public getOption<TKey extends keyof LayoutOptions>(
+  public getOption<TKey extends keyof ReqFormatOptions>(
     key: TKey
-  ): LayoutOptions[TKey] {
+  ): ReqFormatOptions[TKey] {
     return this.options[key];
   }
 }

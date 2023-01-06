@@ -1,11 +1,12 @@
 import { Context } from "../../src/layout/Context";
 import { layout } from "../../src/layout/layout";
+import { defaultOptions } from "../../src/options";
 import { parse } from "../test_utils";
 
 describe("format: layout()", () => {
   function testLayout(sql: string) {
     const cst = parse(sql);
-    return layout(new Context(cst, { keywordCase: "preserve", printWidth: 80 }));
+    return layout(new Context(cst, defaultOptions));
   }
 
   it("computes layout", () => {

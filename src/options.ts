@@ -1,16 +1,17 @@
 import { ParserOptions } from "sql-parser-cst";
 
-export interface FormatOptions
-  extends Partial<SerializeOptions>,
-    Partial<LayoutOptions> {
+export interface FormatOptions {
   dialect: ParserOptions["dialect"];
+  tabWidth?: number;
+  keywordCase?: "upper" | "lower" | "preserve";
+  printWidth?: number;
 }
 
-export interface SerializeOptions {
-  tabWidth: number;
-}
+export type ReqFormatOptions = Required<FormatOptions>;
 
-export type LayoutOptions = {
-  keywordCase: "upper" | "lower" | "preserve";
-  printWidth: number;
+export const defaultOptions: ReqFormatOptions = {
+  dialect: "sqlite",
+  tabWidth: 2,
+  keywordCase: "preserve",
+  printWidth: 80,
 };

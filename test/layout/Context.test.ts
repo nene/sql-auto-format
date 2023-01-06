@@ -1,9 +1,8 @@
 import { ColumnDefinition, Whitespace } from "sql-parser-cst";
 import { Context } from "../../src/layout/Context";
-import { LayoutOptions } from "../../src/options";
+import { defaultOptions } from "../../src/options";
 
 describe("Context", () => {
-  const options: LayoutOptions = { keywordCase: "preserve", printWidth: 80 };
   const node: ColumnDefinition = {
     type: "column_definition",
     name: { type: "identifier", text: "`foo`", name: "foo" },
@@ -14,7 +13,7 @@ describe("Context", () => {
   let context: Context<ColumnDefinition>;
 
   beforeEach(() => {
-    context = new Context(node, options);
+    context = new Context(node, defaultOptions);
   });
 
   it("get() wraps child Node value in Context", () => {
@@ -73,7 +72,7 @@ describe("Context", () => {
     ];
     const ctx = new Context(
       { type: "number_literal", value: 5, text: "5", leading: ws, trailing: ws },
-      options
+      defaultOptions
     );
     expect(ctx.leading()).toBe(ws);
     expect(ctx.trailing()).toBe(ws);
