@@ -13,7 +13,7 @@ import { Context } from "./layout/Context";
  * Takes SQL string and auto-formats it.
  */
 export function format(sql: string, options: FormatOptions): string {
-  const cfg = assignDefaults(options);
+  const cfg: ReqFormatOptions = { ...defaultOptions, ...options };
 
   return pipe(
     parseToCst(cfg),
@@ -26,13 +26,6 @@ export function format(sql: string, options: FormatOptions): string {
     serialize(cfg),
     trim
   )(sql);
-}
-
-function assignDefaults(options: FormatOptions): ReqFormatOptions {
-  return {
-    ...defaultOptions,
-    ...options,
-  };
 }
 
 const parseToCst = curry((options: FormatOptions, sql: string) => {
