@@ -94,7 +94,10 @@ export const layoutNode = contextTransformer<Layout>({
     } else {
       const expr = ctx.get("expr");
       const spaced = layout(["(", expr, ")"]);
-      if (expr.is("list_expr") && layoutLength(spaced) > 80) {
+      if (
+        expr.is("list_expr") &&
+        layoutLength(spaced) > ctx.getOption("printWidth")
+      ) {
         return ["(", indent(layoutMultilineListExpr(expr)), line(")")];
       } else {
         return spaced;

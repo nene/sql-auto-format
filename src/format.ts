@@ -32,6 +32,7 @@ function assignDefaults(options: FormatOptions): Required<FormatOptions> {
   return {
     tabWidth: 2,
     keywordCase: "preserve",
+    printWidth: 80,
     ...options,
   };
 }

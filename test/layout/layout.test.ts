@@ -5,7 +5,7 @@ import { parse } from "../test_utils";
 describe("format: layout()", () => {
   function testLayout(sql: string) {
     const cst = parse(sql);
-    return layout(new Context(cst, { keywordCase: "preserve" }));
+    return layout(new Context(cst, { keywordCase: "preserve", printWidth: 80 }));
   }
 
   it("computes layout", () => {

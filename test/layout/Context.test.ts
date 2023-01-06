@@ -3,7 +3,7 @@ import { Context } from "../../src/layout/Context";
 import { LayoutOptions } from "../../src/options";
 
 describe("Context", () => {
-  const options: LayoutOptions = { keywordCase: "preserve" };
+  const options: LayoutOptions = { keywordCase: "preserve", printWidth: 80 };
   const node: ColumnDefinition = {
     type: "column_definition",
     name: { type: "identifier", text: "`foo`", name: "foo" },

@@ -4,6 +4,7 @@ export interface FormatOptions {
   dialect: ParserOptions["dialect"];
   tabWidth?: number;
   keywordCase?: "upper" | "lower" | "preserve";
+  printWidth?: number;
 }
 
 export interface SerializeOptions {
@@ -12,4 +13,5 @@ export interface SerializeOptions {
 
 export type LayoutOptions = {
   keywordCase: "upper" | "lower" | "preserve";
+  printWidth: number;
 };
