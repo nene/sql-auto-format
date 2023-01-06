@@ -49,6 +49,18 @@ export const layoutNode = contextTransformer<Layout>({
     indent(layout(ctx.get("count"))),
   ],
 
+  // INSERT
+  insert_stmt: (ctx) => layout(ctx.get("clauses")),
+  insert_clause: (ctx) => [
+    line(spacedLayout(ctx.get(["insertKw", "intoKw", "table"]))),
+    indent(layout(ctx.get(["columns"]))),
+  ],
+  values_clause: (ctx) => [
+    line(layout(ctx.get("valuesKw"))),
+    indent(...layoutMultilineListExpr(ctx.get("values"))),
+  ],
+
+  // CREATE TABLE
   create_table_stmt: (ctx) => {
     const columns = ctx.get("columns");
     if (!columns) {
