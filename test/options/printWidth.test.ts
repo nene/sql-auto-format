@@ -38,4 +38,17 @@ describe("printWidth", () => {
         )
     `);
   });
+
+  it("does not break lines shorter than 80 chars", () => {
+    expect(
+      format(`
+        INSERT INTO customer_orders
+        VALUES (1, '2022-01-01 11:10:08', 100, 5, 99.99, 10, 89.99, 9.99, 'pending', 'Hello!')
+      `)
+    ).toBe(dedent`
+      INSERT INTO customer_orders
+      VALUES
+        (1, '2022-01-01 11:10:08', 100, 5, 99.99, 10, 89.99, 9.99, 'pending', 'Hello!')
+    `);
+  });
 });
