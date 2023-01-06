@@ -4,6 +4,7 @@ import { isStatement } from "../node_utils";
 import { spacedLayout } from "./spacedLayout";
 import { layoutMultilineListExpr, lineWithSeparator } from "./multilineLayout";
 import { layout } from "./layout";
+import { layoutLength } from "./layoutLength";
 
 export const layoutNode = contextTransformer<Layout>({
   program: (ctx) =>
@@ -87,10 +88,19 @@ export const layoutNode = contextTransformer<Layout>({
 
   // Expressions
   binary_expr: (ctx) => spacedLayout(ctx.get(["left", "operator", "right"])),
-  paren_expr: (ctx) =>
-    isStatement(ctx.get("expr").node())
-      ? ["(", indent(layout(ctx.get("expr"))), line(")")]
-      : layout(["(", ctx.get("expr"), ")"]),
+  paren_expr: (ctx) => {
+    if (isStatement(ctx.get("expr").node())) {
+      return ["(", indent(layout(ctx.get("expr"))), line(")")];
+    } else {
+      const expr = ctx.get("expr");
+      const spaced = layout(["(", expr, ")"]);
+      if (expr.is("list_expr") && layoutLength(spaced) > 80) {
+        return ["(", indent(layoutMultilineListExpr(expr)), line(")")];
+      } else {
+        return spaced;
+      }
+    }
+  },
   between_expr: (ctx) =>
     spacedLayout(ctx.get(["left", "betweenKw", "begin", "andKw", "end"])),
   list_expr: (ctx) => spacedLayout(ctx.get("items"), [",", WS.space]),
