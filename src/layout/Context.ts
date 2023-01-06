@@ -151,6 +151,6 @@ export class Context<T extends Node> {
 
   /** Returns the current indentation in number of spaces */
   public getIndent(): number {
-    return this.indentation + this.options.tabWidth;
+    return this.indentation * this.options.tabWidth;
   }
 }
