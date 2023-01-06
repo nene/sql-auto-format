@@ -75,4 +75,25 @@ describe("printWidth", () => {
         )
     `);
   });
+
+  it("smaller printWidth setting breaks shorter lines", () => {
+    expect(
+      format(
+        `INSERT INTO customer_orders
+        VALUES (1, '2022-01-01', 100, 5, 99.99, 'XXL')`,
+        { printWidth: 40 }
+      )
+    ).toBe(dedent`
+      INSERT INTO customer_orders
+      VALUES
+        (
+          1,
+          '2022-01-01',
+          100,
+          5,
+          99.99,
+          'XXL'
+        )
+    `);
+  });
 });
