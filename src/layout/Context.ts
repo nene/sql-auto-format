@@ -17,7 +17,8 @@ export class Context<T extends Node> {
   constructor(
     private rawNode: T,
     private options: ReqFormatOptions,
-    private parentCtx?: Context<Node>
+    private parentCtx?: Context<Node>,
+    private indentation = 0
   ) {}
 
   /**
@@ -101,7 +102,7 @@ export class Context<T extends Node> {
   }
 
   private childContext<TNode extends Node>(childNode: TNode): Context<TNode> {
-    return new Context(childNode, this.options, this);
+    return new Context(childNode, this.options, this, this.indentation);
   }
 
   /** The actual raw Node object */
@@ -136,5 +137,20 @@ export class Context<T extends Node> {
     key: TKey
   ): ReqFormatOptions[TKey] {
     return this.options[key];
+  }
+
+  /** Returns new context with increased indentation */
+  public indent(): Context<T> {
+    return new Context(
+      this.rawNode,
+      this.options,
+      this.parentCtx,
+      this.indentation + 1
+    );
+  }
+
+  /** Returns the current indentation in number of spaces */
+  public getIndent(): number {
+    return this.indentation + this.options.tabWidth;
   }
 }

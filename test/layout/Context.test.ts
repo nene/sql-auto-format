@@ -83,4 +83,16 @@ describe("Context", () => {
     expect(context.get("name").getOption("keywordCase")).toBe("preserve");
     expect(context.get("constraints")[0].getOption("keywordCase")).toBe("preserve");
   });
+
+  describe("indent", () => {
+    it("defaults to 0", () => {
+      expect(context.getIndent()).toBe(0);
+    });
+
+    it("calling indent() increases indentation by tabWidth", () => {
+      expect(context.indent().getIndent()).toBe(2);
+      expect(context.indent().indent().getIndent()).toBe(4);
+      expect(context.indent().indent().indent().getIndent()).toBe(6);
+    });
+  });
 });
