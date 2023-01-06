@@ -54,7 +54,7 @@ export const layoutNode = contextTransformer<Layout>({
   insert_stmt: (ctx) => layout(ctx.get("clauses")),
   insert_clause: (ctx) => [
     line(spacedLayout(ctx.get(["insertKw", "intoKw", "table"]))),
-    indent(layout(ctx.get(["columns"]))),
+    ctx.get("columns") ? indent(layout(ctx.get(["columns"]))) : [],
   ],
   values_clause: (ctx) => [
     line(layout(ctx.get("valuesKw"))),

@@ -19,4 +19,17 @@ describe("insert", () => {
         (3, '2022-01-03', 102, 15, 299.99)
     `);
   });
+
+  it("formats INSERT without column names list", () => {
+    expect(
+      format(`
+        INSERT INTO customer_orders
+        VALUES (1, '2022-01-01', 100)
+      `)
+    ).toBe(dedent`
+      INSERT INTO customer_orders
+      VALUES
+        (1, '2022-01-01', 100)
+    `);
+  });
 });
