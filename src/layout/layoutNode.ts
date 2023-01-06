@@ -60,6 +60,16 @@ export const layoutNode = contextTransformer<Layout>({
     indent(...layoutMultilineListExpr(ctx.get("values"))),
   ],
 
+  // UPDATE
+  update_stmt: (ctx) => layout(ctx.get("clauses")),
+  update_clause: (ctx) => line(spacedLayout(ctx.get(["updateKw", "tables"]))),
+  set_clause: (ctx) => [
+    line(layout(ctx.get("setKw"))),
+    indent(...layoutMultilineListExpr(ctx.get("assignments"))),
+  ],
+  column_assignment: (ctx) =>
+    spacedLayout([ctx.get("column"), "=", ctx.get("expr")]),
+
   // CREATE TABLE
   create_table_stmt: (ctx) => {
     const columns = ctx.get("columns");
