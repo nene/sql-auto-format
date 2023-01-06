@@ -16,12 +16,12 @@ export const layoutNode = contextTransformer<Layout>({
   // SELECT
   select_clause: (ctx) => [
     line(layout(ctx.get("selectKw"))),
-    indent(...layoutMultilineListExpr(ctx.get("columns"))),
+    indent(...layoutMultilineListExpr(ctx.indent().get("columns"))),
   ],
   // FROM
   from_clause: (ctx) => [
     line(layout(ctx.get("fromKw"))),
-    indent(layout(ctx.get("expr"))),
+    indent(layout(ctx.indent().get("expr"))),
   ],
   join_expr: (ctx) => [
     line(layout(ctx.get("left"))),
@@ -35,30 +35,30 @@ export const layoutNode = contextTransformer<Layout>({
   // WHERE
   where_clause: (ctx) => [
     line(layout(ctx.get("whereKw"))),
-    indent(layout(ctx.get("expr"))),
+    indent(layout(ctx.indent().get("expr"))),
   ],
   // ORDER BY
   order_by_clause: (ctx) => [
     line(spacedLayout(ctx.get("orderByKw"))),
-    indent(...layoutMultilineListExpr(ctx.get("specifications"))),
+    indent(...layoutMultilineListExpr(ctx.indent().get("specifications"))),
   ],
   sort_specification: (ctx) =>
     spacedLayout([ctx.get("expr"), ctx.get("orderKw")]),
   // LIMIT
   limit_clause: (ctx) => [
     line(layout(ctx.get("limitKw"))),
-    indent(layout(ctx.get("count"))),
+    indent(layout(ctx.indent().get("count"))),
   ],
 
   // INSERT
   insert_stmt: (ctx) => layout(ctx.get("clauses")),
   insert_clause: (ctx) => [
     line(spacedLayout(ctx.get(["insertKw", "intoKw", "table"]))),
-    ctx.get("columns") ? indent(layout(ctx.get(["columns"]))) : [],
+    ctx.get("columns") ? indent(layout(ctx.indent().get(["columns"]))) : [],
   ],
   values_clause: (ctx) => [
     line(layout(ctx.get("valuesKw"))),
-    indent(...layoutMultilineListExpr(ctx.get("values"))),
+    indent(...layoutMultilineListExpr(ctx.indent().get("values"))),
   ],
 
   // UPDATE
@@ -66,7 +66,7 @@ export const layoutNode = contextTransformer<Layout>({
   update_clause: (ctx) => line(spacedLayout(ctx.get(["updateKw", "tables"]))),
   set_clause: (ctx) => [
     line(layout(ctx.get("setKw"))),
-    indent(...layoutMultilineListExpr(ctx.get("assignments"))),
+    indent(...layoutMultilineListExpr(ctx.indent().get("assignments"))),
   ],
   column_assignment: (ctx) =>
     spacedLayout([ctx.get("column"), "=", ctx.get("expr")]),
@@ -79,7 +79,7 @@ export const layoutNode = contextTransformer<Layout>({
     }
     return [
       line(spacedLayout([...ctx.get(["createKw", "tableKw", "name"]), "("])),
-      indent(...layoutMultilineListExpr(columns.get("expr"))),
+      indent(...layoutMultilineListExpr(columns.indent().get("expr"))),
       line(")"),
     ];
   },
@@ -90,15 +90,15 @@ export const layoutNode = contextTransformer<Layout>({
   binary_expr: (ctx) => spacedLayout(ctx.get(["left", "operator", "right"])),
   paren_expr: (ctx) => {
     if (isStatement(ctx.get("expr").node())) {
-      return ["(", indent(layout(ctx.get("expr"))), line(")")];
+      return ["(", indent(layout(ctx.indent().get("expr"))), line(")")];
     } else {
       const expr = ctx.get("expr");
       const spaced = layout(["(", expr, ")"]);
       if (
         expr.is("list_expr") &&
-        layoutLength(spaced) > ctx.getOption("printWidth")
+        ctx.getIndent() + layoutLength(spaced) > ctx.getOption("printWidth")
       ) {
-        return ["(", indent(layoutMultilineListExpr(expr)), line(")")];
+        return ["(", indent(layoutMultilineListExpr(expr.indent())), line(")")];
       } else {
         return spaced;
       }

@@ -39,7 +39,20 @@ describe("printWidth", () => {
     `);
   });
 
-  it("does not break lines shorter than 80 chars", () => {
+  it("does not break lines reaching exactly 80 chars", () => {
+    expect(
+      format(`
+        INSERT INTO customer_orders
+        VALUES (1, '2022-01-01 11:10:08', 100, 5, 99.99, 10, 89.99, 9.99, 'pending', 'Heip!')
+      `)
+    ).toBe(dedent`
+      INSERT INTO customer_orders
+      VALUES
+        (1, '2022-01-01 11:10:08', 100, 5, 99.99, 10, 89.99, 9.99, 'pending', 'Heip!')
+    `);
+  });
+
+  it("breaks lines reaching exactly 81 chars", () => {
     expect(
       format(`
         INSERT INTO customer_orders
@@ -48,7 +61,18 @@ describe("printWidth", () => {
     ).toBe(dedent`
       INSERT INTO customer_orders
       VALUES
-        (1, '2022-01-01 11:10:08', 100, 5, 99.99, 10, 89.99, 9.99, 'pending', 'Hello!')
+        (
+          1,
+          '2022-01-01 11:10:08',
+          100,
+          5,
+          99.99,
+          10,
+          89.99,
+          9.99,
+          'pending',
+          'Hello!'
+        )
     `);
   });
 });
