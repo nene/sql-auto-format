@@ -96,4 +96,18 @@ describe("printWidth", () => {
         )
     `);
   });
+
+  it.skip("correctly counts spaces between comments", () => {
+    expect(
+      format(`
+        INSERT INTO customer_orders
+        VALUES
+          (1, '2022-01-01', /* comment */ /* comment */ /* comment */ 'pending', 'hi!')
+      `)
+    ).toBe(dedent`
+      INSERT INTO customer_orders
+      VALUES
+        (1, '2022-01-01', /* comment */ /* comment */ /* comment */ 'pending', 'hi!')
+    `);
+  });
 });
