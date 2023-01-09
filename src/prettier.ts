@@ -1,27 +1,40 @@
-type Doc =
-  | { type: "nil" }
-  | { type: "text"; text: string; doc: Doc }
-  | { type: "line"; indent: number; doc: Doc };
+class Nil {
+  public readonly type = "nil";
+  inspect(): string {
+    return "Nil";
+  }
+}
 
-const MkText = (text: string, doc: Doc): Doc => ({ type: "text", text, doc });
-const MkLine = (indent: number, doc: Doc): Doc => ({
-  type: "line",
-  indent,
-  doc,
-});
+class Text {
+  public readonly type = "text";
+  constructor(public text: string, public doc: Doc) {}
+  inspect(): string {
+    return `["${this.text}" Text ${this.doc.inspect()}]`;
+  }
+}
 
-const nil: Doc = { type: "nil" };
+class Line {
+  public readonly type = "line";
+  constructor(public indent: number, public doc: Doc) {}
+  inspect(): string {
+    return `[${this.indent} Line ${this.doc.inspect()}]`;
+  }
+}
 
-const text = (x: string): Doc => MkText(x, nil);
+type Doc = Nil | Text | Line;
 
-const line: Doc = MkLine(0, nil);
+const nil: Doc = new Nil();
+
+const text = (x: string): Doc => new Text(x, nil);
+
+const line: Doc = new Line(0, nil);
 
 const concat = (x: Doc, y: Doc): Doc => {
   switch (x.type) {
     case "text":
-      return MkText(x.text, concat(x.doc, y));
+      return new Text(x.text, concat(x.doc, y));
     case "line":
-      return MkLine(x.indent, concat(x.doc, y));
+      return new Line(x.indent, concat(x.doc, y));
     case "nil":
       return y;
   }
@@ -32,9 +45,9 @@ const concatAll = (...args: Doc[]): Doc => args.reduce((a, b) => concat(a, b));
 const nest = (width: number, x: Doc): Doc => {
   switch (x.type) {
     case "text":
-      return MkText(x.text, nest(width, x.doc));
+      return new Text(x.text, nest(width, x.doc));
     case "line":
-      return MkLine(width + x.indent, nest(width, x.doc));
+      return new Line(width + x.indent, nest(width, x.doc));
     case "nil":
       return x;
   }
