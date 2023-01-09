@@ -29,18 +29,18 @@ const text = (x: string): Doc => new Text(x, nil);
 
 const line: Doc = new Line(0, nil);
 
-const concat = (x: Doc, y: Doc): Doc => {
+const concatTwo = (x: Doc, y: Doc): Doc => {
   switch (x.type) {
     case "text":
-      return new Text(x.text, concat(x.doc, y));
+      return new Text(x.text, concatTwo(x.doc, y));
     case "line":
-      return new Line(x.indent, concat(x.doc, y));
+      return new Line(x.indent, concatTwo(x.doc, y));
     case "nil":
       return y;
   }
 };
 
-const concatAll = (...args: Doc[]): Doc => args.reduce((a, b) => concat(a, b));
+const concat = (...args: Doc[]): Doc => args.reduce(concatTwo);
 
 const nest = (width: number, x: Doc): Doc => {
   switch (x.type) {
@@ -72,15 +72,10 @@ export const showFuncCall = (fn: FuncCall): Doc =>
 const showParen = (args: FuncCall[]): Doc =>
   args.length === 0
     ? nil
-    : concatAll(
-        text("("),
-        nest(2, concat(line, showArgs(args))),
-        line,
-        text(")")
-      );
+    : concat(text("("), nest(2, concat(line, showArgs(args))), line, text(")"));
 
 const showArgs = ([x, ...xs]: FuncCall[]): Doc =>
   xs.reduce(
-    (res, fn) => concatAll(res, text(","), line, showFuncCall(fn)),
+    (res, fn) => concat(res, text(","), line, showFuncCall(fn)),
     showFuncCall(x)
   );
