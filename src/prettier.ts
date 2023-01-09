@@ -1,30 +1,73 @@
-type Doc = string;
+type Doc =
+  | { type: "nil" }
+  | { type: "text"; text: string; doc: Doc }
+  | { type: "line"; indent: number; doc: Doc };
 
-const concat = (...args: Doc[]): Doc => args.reduce((a, b) => a + b);
+const MkText = (text: string, doc: Doc): Doc => ({ type: "text", text, doc });
+const MkLine = (indent: number, doc: Doc): Doc => ({
+  type: "line",
+  indent,
+  doc,
+});
 
-const nil: Doc = "";
+const nil: Doc = { type: "nil" };
 
-const text = (x: string): Doc => x;
+const text = (x: string): Doc => MkText(x, nil);
 
-const line: Doc = "\n";
+const line: Doc = MkLine(0, nil);
 
-const nest = (width: number, lines: Doc): Doc =>
-  lines.replace(/\n/g, "\n" + " ".repeat(width));
+const concat = (x: Doc, y: Doc): Doc => {
+  switch (x.type) {
+    case "text":
+      return MkText(x.text, concat(x.doc, y));
+    case "line":
+      return MkLine(x.indent, concat(x.doc, y));
+    case "nil":
+      return y;
+  }
+};
 
-export const layout = (doc: Doc): string => doc;
+const concatAll = (...args: Doc[]): Doc => args.reduce((a, b) => concat(a, b));
+
+const nest = (width: number, x: Doc): Doc => {
+  switch (x.type) {
+    case "text":
+      return MkText(x.text, nest(width, x.doc));
+    case "line":
+      return MkLine(width + x.indent, nest(width, x.doc));
+    case "nil":
+      return x;
+  }
+};
+
+export const layout = (x: Doc): string => {
+  switch (x.type) {
+    case "text":
+      return x.text + layout(x.doc);
+    case "line":
+      return "\n" + " ".repeat(x.indent) + layout(x.doc);
+    case "nil":
+      return "";
+  }
+};
 
 export type FuncCall = { type: "func_call"; name: string; args: FuncCall[] };
 
 export const showFuncCall = (fn: FuncCall): Doc =>
-  concat(fn.name, showParen(fn.args));
+  concat(text(fn.name), showParen(fn.args));
 
 const showParen = (args: FuncCall[]): Doc =>
   args.length === 0
     ? nil
-    : concat(text("("), nest(2, concat(line, showArgs(args))), line, text(")"));
+    : concatAll(
+        text("("),
+        nest(2, concat(line, showArgs(args))),
+        line,
+        text(")")
+      );
 
 const showArgs = ([x, ...xs]: FuncCall[]): Doc =>
   xs.reduce(
-    (res, fn) => concat(res, text(","), line, showFuncCall(fn)),
+    (res, fn) => concatAll(res, text(","), line, showFuncCall(fn)),
     showFuncCall(x)
   );
