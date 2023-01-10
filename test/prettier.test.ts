@@ -1,37 +1,6 @@
-import dedent from "dedent-js";
-import { layout, showFuncCall } from "../src/prettier";
+import { FuncCall, pretty, showFuncCall } from "../src/prettier";
 
 describe("prettier", () => {
-  it("performs layout", () => {
-    expect(
-      layout(
-        showFuncCall({
-          type: "func_call",
-          name: "sqrt",
-          args: [
-            { type: "func_call", name: "foo", args: [] },
-            {
-              type: "func_call",
-              name: "add",
-              args: [
-                { type: "func_call", name: "a", args: [] },
-                { type: "func_call", name: "b", args: [] },
-              ],
-            },
-          ],
-        })
-      )
-    ).toEqual(dedent`
-      sqrt(
-        foo,
-        add(
-          a,
-          b
-        )
-      )
-    `);
-  });
-
   it("performs show", () => {
     expect(
       showFuncCall({
@@ -39,6 +8,49 @@ describe("prettier", () => {
         name: "sqrt",
         args: [{ type: "func_call", name: "foo", args: [] }],
       }).inspect()
-    ).toEqual(`["sqrt" Text ["(" Text [2 Line ["foo" Text [0 Line [")" Text Nil]]]]]]`);
+    ).toMatchInlineSnapshot(
+      `"["sqrt" Text ["(" Text [[" " Text ["foo" Text [" " Text [")" Text Nil]]]] Union [2 Line ["foo" Text [0 Line [")" Text Nil]]]]]]]"`
+    );
+  });
+
+  const funcCall: FuncCall = {
+    type: "func_call",
+    name: "sqrt",
+    args: [
+      { type: "func_call", name: "foo", args: [] },
+      {
+        type: "func_call",
+        name: "add",
+        args: [
+          { type: "func_call", name: "a", args: [] },
+          { type: "func_call", name: "b", args: [] },
+        ],
+      },
+    ],
+  };
+
+  it("performs pretty with line-width: 10", () => {
+    expect(pretty(10, showFuncCall(funcCall))).toMatchInlineSnapshot(`
+      "sqrt(
+        foo,
+        add(
+          a,
+          b
+        )
+      )"
+    `);
+  });
+
+  it("performs pretty with line-width: 15", () => {
+    expect(pretty(15, showFuncCall(funcCall))).toMatchInlineSnapshot(`
+      "sqrt(
+        foo,
+        add( a, b )
+      )"
+    `);
+  });
+
+  it("performs pretty with line-width: 80", () => {
+    expect(pretty(80, showFuncCall(funcCall))).toMatchInlineSnapshot(`"sqrt( foo, add( a, b ) )"`);
   });
 });
