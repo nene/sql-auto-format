@@ -1,6 +1,8 @@
-# SQL auto-format ![build status](https://github.com/nene/sql-auto-format/actions/workflows/build.yml/badge.svg)
+# SQL auto-format experiment ![build status](https://github.com/nene/sql-auto-format/actions/workflows/build.yml/badge.svg)
 
 Pretty-prints SQL code.
+
+**Status:** This experimental formatter has been discontinued. See its successor [prettier-plugin-sql-cst][] instead.
 
 ## Usage
 
@@ -20,3 +22,5 @@ SELECT
 FROM
   person
 ```
+
+[prettier-plugin-sql-cst]: https://github.com/nene/prettier-plugin-sql-cst
